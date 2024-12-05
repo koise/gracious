@@ -1,0 +1,72 @@
+@use '../variables' as v;
+@import '../general.scss';
+
+body {
+    .container {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: v.$white;
+        width: 100%;
+        .form-default {
+            background-color: v.$white;
+            padding: 40px;
+            min-width: 500px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+            border-radius: 20px;
+            .form-heading {
+                .heading-text h1 {
+                        text-align: center;
+                        font-size: 2.2rem;
+                        color: v.$primary;
+                    }
+            }
+            
+            .form-body {
+
+                    .form-control {
+                        display: flex;
+                        flex-direction: column;
+                        margin: 20px 0;
+
+                        .invalid-feedback {
+                            color: rgb(255, 0, 0);
+                            font-size: 1.1rem;
+                            text-align: center;
+                        }
+                        label {
+                            margin-bottom: 10px;
+                            font-size: 1.2rem;
+                        }
+                        input {
+                            padding: 10px 15px;
+                            outline: none;
+                            border: solid 1px black;
+                            font-size: 1rem;
+                            &:focus {
+                                outline: none;
+                            }
+                        }
+                        .button {
+                            display: flex;
+                            justify-content: center;
+                            margin-top: 20px;
+                            button {
+                                width: 100%;
+                                padding: 15px 0;
+                                background-color: v.$primary;
+                                color: v.$white;
+                                border: none;
+                                font-size: 1.1rem;
+                                cursor: pointer;
+                            }
+                        }
+                        }
+                        
+            }
+        }
+    }
+}

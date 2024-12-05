@@ -1,0 +1,284 @@
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #EAEBED;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+}
+
+@media only screen and (min-width: 320px) and (max-width: 767px) {
+  .text-danger {
+    text-align: start !important;
+    margin-top: 10px;
+    color: red;
+    font-size: 1rem;
+    border: 2px solid rgb(255, 147, 147);
+    background-color: rgb(255, 200, 200);
+    padding: 10px;
+    width: 100%;
+  }
+  body .container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  body .container .form-default {
+    padding: 40px;
+    min-width: 500px;
+    display: flex;
+    flex-direction: column;
+  }
+  body .container .form-default .form-heading {
+    margin-bottom: 40px;
+  }
+  body .container .form-default .form-heading .heading-text {
+    display: flex;
+    justify-content: center;
+  }
+  body .container .form-default .form-heading .heading-text h1 {
+    font-size: 36px;
+    color: #0a6d9d;
+  }
+  body .container .form-default .form-body .body-heading {
+    display: flex;
+    justify-content: center;
+  }
+  body .container .form-default .form-body .form-group-col {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+  }
+  body .container .form-default .form-body .form-group-col:nth-child(4) {
+    margin-bottom: 50px;
+  }
+  body .container .form-default .form-body label {
+    margin-bottom: 10px;
+    font-size: 20px;
+  }
+  body .container .form-default .form-body input {
+    padding: 10px 15px;
+    outline: none;
+    border: solid 1px black;
+    border-radius: 5px;
+  }
+  body .container .form-default .form-body input:focus {
+    outline: none;
+  }
+  body .container .form-default .form-body .button {
+    display: flex;
+    justify-content: center;
+  }
+  body .container .form-default .form-body .button button {
+    flex: 1;
+    padding: 15px 0;
+    background-color: #0a6d9d;
+    color: #EAEBED;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  body .container .form-default .form-body span {
+    text-align: center;
+  }
+  body .container .form-default .form-body span a {
+    color: #0a6d9d;
+    text-decoration: none;
+  }
+  body .container .form-default .form-body .forgot-password {
+    text-align: end;
+  }
+  body .container .form-default .form-body .forgot-password a {
+    color: #0a6d9d;
+    text-decoration: none;
+  }
+}
+/* Tablet (portrait and landscape) ----------- */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .text-danger {
+    text-align: start !important;
+    margin-top: 10px;
+    color: red;
+    font-size: 1rem;
+    border: 2px solid rgb(255, 147, 147);
+    background-color: rgb(255, 200, 200);
+    padding: 10px;
+    width: 100%;
+  }
+  body .container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  body .container .form-default {
+    padding: 40px;
+    min-width: 500px;
+    display: flex;
+    flex-direction: column;
+  }
+  body .container .form-default .form-heading {
+    margin-bottom: 40px;
+  }
+  body .container .form-default .form-heading .heading-text {
+    display: flex;
+    justify-content: center;
+  }
+  body .container .form-default .form-heading .heading-text h1 {
+    font-size: 36px;
+    color: #0a6d9d;
+  }
+  body .container .form-default .form-body .body-heading {
+    display: flex;
+    justify-content: center;
+  }
+  body .container .form-default .form-body .form-group-col {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+  }
+  body .container .form-default .form-body .form-group-col:nth-child(4) {
+    margin-bottom: 50px;
+  }
+  body .container .form-default .form-body label {
+    margin-bottom: 10px;
+    font-size: 20px;
+  }
+  body .container .form-default .form-body input {
+    padding: 10px 15px;
+    outline: none;
+    border: solid 1px black;
+    border-radius: 5px;
+  }
+  body .container .form-default .form-body input:focus {
+    outline: none;
+  }
+  body .container .form-default .form-body .button {
+    display: flex;
+    justify-content: center;
+  }
+  body .container .form-default .form-body .button button {
+    flex: 1;
+    padding: 15px 0;
+    background-color: #0a6d9d;
+    color: #EAEBED;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  body .container .form-default .form-body span {
+    text-align: center;
+  }
+  body .container .form-default .form-body span a {
+    color: #0a6d9d;
+    text-decoration: none;
+  }
+  body .container .form-default .form-body .forgot-password {
+    text-align: end;
+  }
+  body .container .form-default .form-body .forgot-password a {
+    color: #0a6d9d;
+    text-decoration: none;
+  }
+}
+/* Desktops and laptops ----------- */
+@media only screen and (min-width: 1024px) {
+  .text-danger {
+    text-align: start !important;
+    margin-top: 10px;
+    color: red;
+    font-size: 1rem;
+    border: 2px solid rgb(255, 147, 147);
+    background-color: rgb(255, 200, 200);
+    padding: 10px;
+    width: 100%;
+  }
+  body .container {
+    height: 100vh;
+    max-width: 1920px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  body .container .form-default {
+    padding: 40px;
+    min-width: 500px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    border-radius: 20px;
+  }
+  body .container .form-default .form-heading {
+    margin-bottom: 20px;
+  }
+  body .container .form-default .form-heading .heading-text {
+    display: flex;
+    justify-content: center;
+  }
+  body .container .form-default .form-heading .heading-text h1 {
+    font-size: 36px;
+    color: #0a6d9d;
+  }
+  body .container .form-default .form-body .body-heading {
+    display: flex;
+    justify-content: center;
+  }
+  body .container .form-default .form-body .form-group-col {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+  }
+  body .container .form-default .form-body .form-group-col:nth-child(4) {
+    margin-bottom: 50px;
+  }
+  body .container .form-default .form-body label {
+    margin-bottom: 10px;
+    font-size: 20px;
+  }
+  body .container .form-default .form-body input {
+    padding: 10px 15px;
+    outline: none;
+    border: solid 1px black;
+  }
+  body .container .form-default .form-body input:focus {
+    outline: none;
+  }
+  body .container .form-default .form-body .button {
+    display: flex;
+    justify-content: center;
+  }
+  body .container .form-default .form-body .button button {
+    flex: 1;
+    padding: 15px 0;
+    background-color: #0a6d9d;
+    color: #EAEBED;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  body .container .form-default .form-body span {
+    text-align: center;
+  }
+  body .container .form-default .form-body span a {
+    color: #0a6d9d;
+    text-decoration: none;
+  }
+  body .container .form-default .form-body .forgot-password {
+    text-align: end;
+  }
+  body .container .form-default .form-body .forgot-password a {
+    color: #0a6d9d;
+    text-decoration: none;
+  }
+}/*# sourceMappingURL=userlogin.css.map */

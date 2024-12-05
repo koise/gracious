@@ -1,0 +1,107 @@
+@use 'variables' as v;
+@import 'general.scss';
+
+@media only screen and (min-width: 1024px) {
+    .topbar {
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        display: flex;
+        justify-content: space-between;
+        position: sticky;
+        height: 70px;
+        padding: 0 40px;
+        .leftside-navigation {
+            display: flex;
+            flex: 1;
+            ul {
+                list-style: none;
+                height: 100%;
+                display: flex;
+                li {
+                    display: flex;
+                    align-items: center;
+                    height: 100%;
+                    img {
+                        object-fit: cover;
+                        width: 70px;
+                        margin: 0 20px;
+                    }
+    
+                    a {
+                        display: flex;
+                        align-items: center;
+                        height: 100%;
+                        width: 100%;
+                        padding: 0 20px;
+                        text-decoration: none;
+                        color: v.$black;
+                        background-color: 4px solid v.$white;
+                        border-bottom: 4px solid v.$white;
+                        transition: 0.2s ease-in-out;
+    
+                        &:hover {
+                            border-bottom: 4px solid v.$primary;
+                            color: v.$primary;
+                        }
+    
+                        &.active {
+                            border-bottom: 4px solid v.$primary;
+                            color: v.$primary;
+                        }
+                    }
+                }
+            }
+        }
+
+        .rightside-navigation {
+            position: relative;
+            width: 200px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            
+            svg {
+                fill: v.$primary;
+                margin: 0 10px;
+            }
+            .account {
+                box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                display: none;
+                position: absolute;
+                top: 100%;
+                z-index: 1000;
+                white-space: nowrap;
+                background-color: v.$white;
+                border: 1px solid v.$white;
+        
+                ul {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+        
+                    li {
+                        width: 100%;
+                        text-align: left;
+        
+                        a {
+                            display: block;
+                            padding: 15px 10px;
+                            text-decoration: none;
+                            color: #333;
+                            transition: 0.3s ease-in-out;
+        
+                            &:hover {
+                                background-color: v.$primary; // Example hover background color
+                                color: v.$white; // Example hover text color
+                            }
+                        }
+                    }
+                }
+            }
+        
+            &:hover .account {
+                display: flex; // Show account dropdown on parent hover
+            }
+        }
+        
+    }
+}

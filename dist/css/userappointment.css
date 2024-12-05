@@ -1,0 +1,132 @@
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #EAEBED;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+}
+
+/* Tablet (portrait and landscape) ----------- */
+/* Desktops and laptops ----------- */
+@media only screen and (min-width: 1024px) {
+  main {
+    width: 100%;
+  }
+  main .wrapper {
+    max-width: 1980px;
+    margin: auto;
+  }
+  main .wrapper .container .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+  }
+  main .wrapper .container .content .section {
+    max-width: 767px;
+    width: 100%;
+    padding: 40px;
+  }
+  main .wrapper .container .content .section h2 {
+    font-size: 1.5rem;
+  }
+  main .wrapper .container .content .section .header {
+    display: flex;
+    justify-content: space-between;
+  }
+  main .wrapper .container .content .section .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  main .wrapper .container .content .section .section-header h2 {
+    font-size: 1.5rem;
+  }
+  main .wrapper .container .content .section .section-header button {
+    padding: 10px;
+    height: 100%;
+    border: none;
+    background-color: #0a6d9d;
+    color: #EAEBED;
+  }
+  main .wrapper .container .content .section .table-wrapper {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  }
+  main .wrapper .container .content .section .table-wrapper .table-navigation {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  main .wrapper .container .content .section .table-wrapper .table-navigation input, main .wrapper .container .content .section .table-wrapper .table-navigation button {
+    padding: 5px;
+  }
+  main .wrapper .container .content .section .table-wrapper .table-navigation input {
+    border: none;
+    border-bottom: 1px solid #42434a;
+    min-width: 300px;
+  }
+  main .wrapper .container .content .section .table-wrapper .table-navigation input:focus {
+    outline: none;
+    border-bottom: 1px solid #42434a;
+  }
+  main .wrapper .container .content .section .table-wrapper .table-navigation button {
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  main .wrapper .container .content .section .table-wrapper .scrollable-table {
+    height: 100%;
+    overflow-y: auto;
+    max-height: 600px;
+    scrollbar-width: thin;
+    scrollbar-color: #0a6d9d #f1f1f1;
+  }
+  main .wrapper .container .content .section .table-wrapper .scrollable-table .table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    color: #11121a;
+  }
+  main .wrapper .container .content .section .table-wrapper .scrollable-table .table thead tr th {
+    padding: 10px;
+    background-color: #EAEBED;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    color: #11121a;
+    position: sticky;
+    top: 0;
+  }
+  main .wrapper .container .content .section .table-wrapper .scrollable-table .table tbody tr td {
+    text-align: center;
+    background-color: #EAEBED;
+    padding: 40px 0;
+  }
+  main .wrapper .container .content .section .table-wrapper .scrollable-table .table tbody tr td button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    margin: 0 10px;
+  }
+  main .wrapper .container .content .section .table-wrapper .scrollable-table .table tbody tr td button svg {
+    width: 100%;
+  }
+  main .wrapper .container .content .section .table-wrapper .scrollable-table .table tbody tr td button:nth-child(1) svg {
+    fill: #0a6d9d;
+  }
+  main .wrapper .container .content .section .table-wrapper .scrollable-table .table tbody tr td button:nth-child(2) svg {
+    fill: red;
+  }
+}/*# sourceMappingURL=userappointment.css.map */

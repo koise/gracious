@@ -1,0 +1,210 @@
+@use '../variables' as v;
+@import '../general.scss';
+
+main {
+    width: 100%;
+    .wrapper {
+        width: 100%;
+    
+        .container {
+            display: flex;
+            flex: 1;
+            max-width: 1920px;
+            margin: auto;
+            .content {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                .section {
+                    width: 100%;
+                    padding: 40px;
+                    .section-header {
+                        display: flex;
+                        justify-content: space-between;
+                        
+                        h2 {
+                            font-size: 1.5rem;
+                            span {
+                            color: v.$primary;
+                            font-size: 1.5rem;
+                        }
+                    }
+                    }
+
+                    .section-content-header {
+                        padding: 20px 10px;
+                        h2 {
+                            font-size: 1.5rem;
+                            color: v.$primary;
+                        }
+                    }
+                    .table-wrapper {
+                        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                        .table-navigation {
+                            display: flex;
+                            justify-content: space-between;
+                            input, button {
+                                padding: 5px;
+                            }
+                            input {
+                                border: none;
+                                border-bottom: 1px solid v.$line;
+                                &:focus {
+                                    outline: none;
+                                    border-bottom: 1px solid v.$line;
+                                }
+
+                                &[type=text]{
+                                    min-width: 300px;
+                                }
+                            }
+                            button {
+                                font-weight: bold;
+                                padding: 10px;
+                                border: none;
+                                cursor: pointer;
+                            }
+
+                            #view-btn {
+                                background-color: gray;
+                                color: white;
+                            }
+                            
+                            #add-btn {
+                                background-color: v.$primary;
+                                color: white;
+                            }
+
+                            padding: 20px;
+                        }
+                    }
+                    .table-wrapper .scrollable-table {
+                        min-height: 620px;
+                        overflow-y: auto;
+                        max-height: 620px;
+                        scrollbar-width: thin;
+                        scrollbar-color: v.$primary #f1f1f1;
+                        .table {
+                            width: 100%;
+                            height: 100%;
+                            border-collapse: collapse;
+                            color: v.$black;
+                            thead {
+                                tr{
+                                    th{
+                                        
+                                        padding: 10px;
+                                        background-color: v.$white;
+                                        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                                        color: v.$black;
+                                        position: sticky;
+                                        top: 0;
+                                    }
+                                }
+                            }
+                            tbody {
+                                tr {
+                                    
+                                    td {
+                                        text-align: center;
+                                        background-color: v.$white;
+                                        padding: 40px 0;
+                                        button {
+                                            background-color: transparent;
+                                            border: none;
+                                            cursor: pointer;
+                                            padding: 10px;
+                                            margin: 0 10px;
+                                            svg {
+                                                width: 100%;
+                                            }
+
+                                            &:nth-child(1) svg {
+                                                fill: v.$primary;
+                                               
+                                            }
+
+                                            &:nth-child(2) svg {
+                                                fill: red;
+                                              
+                                            }
+                                        }
+
+                                        .accept-btn, .activate-btn  {
+                                            background-color: v.$primary;
+                                            color: white;
+                                        }
+
+                                        .view-btn, .edit-btn {
+                                            background-color: v.$line;
+                                            color: white;
+                                        }
+                                        .deactivate-btn, .reject-btn {
+                                            background-color: darkred;
+                                            color: white;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.pagination-controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pagination-link {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    background-color: #f1f1f1;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination-link:hover {
+    background-color: v.$primary;
+    color: white;
+}
+
+.pagination-link.active {
+    background-color: v.$primary;
+    color: white;
+    border-color: v.$primary;
+}
+
+.pagination-link:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.table-sortable th {
+	cursor: pointer;
+}
+
+.table-sortable .th-sort-asc::after {
+	content: "\25b4";
+}
+
+.table-sortable .th-sort-desc::after {
+	content: "\25be";
+}
+
+.table-sortable .th-sort-asc::after,
+.table-sortable .th-sort-desc::after {
+	margin-left: 5px;
+}
+
+.table-sortable .th-sort-asc,
+.table-sortable .th-sort-desc {
+	background: rgba(0, 0, 0, 0.1);
+}

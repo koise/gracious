@@ -1,0 +1,126 @@
+@use 'variables' as v;
+@import 'general.scss';
+
+.sidebar {
+    position: sticky; /* Makes the sidebar sticky */
+    top: 0; /* Ensures it sticks to the top when scrolling */
+    left: 0; /* Positions it on the left */
+    width: 250px; /* Set width for desktop view */
+    height: 100vh; /* Ensures it covers the full viewport height */
+    padding: 5px 1em;
+    background-color: v.$black;
+    border-right: 1px solid v.$line;
+    overflow: hidden;
+    transition: 300ms ease-in-out;
+
+    &.close {
+        padding: 5px;
+        width: 60px; /* Compact width for closed state */
+        min-width: 0;
+    }
+
+    ul {
+        list-style: none;
+
+        li {
+            margin: 10px 0;
+            white-space: nowrap;
+            &:first-child {
+                display: flex;
+                justify-content: flex-end;
+                margin-bottom: 16px;
+
+                .logo {
+                    font-weight: 600;
+                }
+
+                button {
+                    background-color: v.$black;
+                    border: none;
+                    margin: 0 10px;
+                    cursor: pointer;
+                }
+            }
+
+            a.active {
+                color: v.$primary;
+                border-right: 4px solid v.$primary;
+                border-bottom: 1px solid v.$line;
+                background-color: rgba(255, 255, 255, 0.1);
+
+                svg {
+                    fill: v.$primary;
+                }
+            }
+
+            a span, .dropdown-btn span {
+                width: 100%;
+                padding-left: 20px;
+            }
+
+            a:hover, .dropdown-btn:hover {
+                background-color: v.$hover;
+            }
+
+            .sub-menu {
+                transition: max-height 150ms ease-in-out, opacity 150ms ease-in-out;
+                max-height: 0;
+                opacity: 0;
+                overflow: hidden;
+                li {
+                    white-space: wrap;
+                    a {
+                        width: 100%;
+                        padding-left: 50px;
+                        margin: 0;
+                        line-height: 24px;
+                    }
+                }
+            }
+
+            .sub-menu.show {
+                opacity: 1;
+                max-height: 500px; /* Adjust based on sub-menu content */
+            }
+        }
+    }
+
+    a, .logo {
+        border-radius: .5em;
+        padding: .85em;
+        text-decoration: none;
+        color: v.$white;
+        display: flex;
+        align-items: center;
+        margin: 1em 0;
+    }
+
+    .dropdown-btn {
+        border-radius: .5em;
+        padding: .85em;
+        color: v.$white;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        text-align: left;
+        background-color: v.$black;
+        border: none;
+        cursor: pointer;
+
+        &.rotate svg:last-child {
+            rotate: 180deg;
+        }
+    }
+
+    svg {
+        flex-shrink: 0;
+        fill: v.$white;
+        transition: rotate 150ms ease;
+    }
+}
+
+@media only screen and (max-width: 1439px) {
+    .sidebar {
+        display: none;
+    }
+}

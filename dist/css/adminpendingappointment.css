@@ -1,0 +1,135 @@
+@charset "UTF-8";
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #EAEBED;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+}
+
+main {
+  width: 100%;
+}
+main .wrapper {
+  width: 100%;
+}
+main .wrapper .container {
+  display: flex;
+  flex: 1;
+  max-width: 1920px;
+  margin: auto;
+}
+main .wrapper .container .content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+main .wrapper .container .content .section {
+  width: 100%;
+  padding: 40px;
+}
+main .wrapper .container .content .section .section-header {
+  display: flex;
+  justify-content: space-between;
+}
+main .wrapper .container .content .section .table-wrapper {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+main .wrapper .container .content .section .table-wrapper .table-navigation {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+main .wrapper .container .content .section .table-wrapper .table-navigation input, main .wrapper .container .content .section .table-wrapper .table-navigation button {
+  padding: 5px;
+}
+main .wrapper .container .content .section .table-wrapper .table-navigation input {
+  border: none;
+  border-bottom: 1px solid #42434a;
+  min-width: 300px;
+}
+main .wrapper .container .content .section .table-wrapper .table-navigation input:focus {
+  outline: none;
+  border-bottom: 1px solid #42434a;
+}
+main .wrapper .container .content .section .table-wrapper .table-navigation button {
+  font-weight: bold;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+main .wrapper .container .content .section .table-wrapper .scrollable-table {
+  height: 100%;
+  overflow-y: auto;
+  max-height: 600px;
+  scrollbar-width: thin;
+  scrollbar-color: #0a6d9d #f1f1f1;
+}
+main .wrapper .container .content .section .table-wrapper .scrollable-table .appointment-table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  color: #11121a;
+}
+main .wrapper .container .content .section .table-wrapper .scrollable-table .appointment-table thead tr th {
+  padding: 10px;
+  background-color: #EAEBED;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  color: #11121a;
+  position: sticky;
+  top: 0;
+}
+main .wrapper .container .content .section .table-wrapper .scrollable-table .appointment-table tbody tr td {
+  text-align: center;
+  background-color: #EAEBED;
+  padding: 40px 0;
+}
+main .wrapper .container .content .section .table-wrapper .scrollable-table .appointment-table tbody tr td button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  margin: 0 10px;
+}
+main .wrapper .container .content .section .table-wrapper .scrollable-table .appointment-table tbody tr td button svg {
+  width: 100%;
+}
+main .wrapper .container .content .section .table-wrapper .scrollable-table .appointment-table tbody tr td button:nth-child(1) svg {
+  fill: green;
+}
+main .wrapper .container .content .section .table-wrapper .scrollable-table .appointment-table tbody tr td button:nth-child(2) svg {
+  fill: red;
+}
+
+.table-sortable th {
+  cursor: pointer;
+}
+
+.table-sortable .th-sort-asc::after {
+  content: "▴";
+}
+
+.table-sortable .th-sort-desc::after {
+  content: "▾";
+}
+
+.table-sortable .th-sort-asc::after,
+.table-sortable .th-sort-desc::after {
+  margin-left: 5px;
+}
+
+.table-sortable .th-sort-asc,
+.table-sortable .th-sort-desc {
+  background: rgba(0, 0, 0, 0.1);
+}/*# sourceMappingURL=adminpendingappointment.css.map */

@@ -1,0 +1,78 @@
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #EAEBED;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+}
+
+body .container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #EAEBED;
+  width: 100%;
+}
+body .container .form-default {
+  background-color: #EAEBED;
+  padding: 40px;
+  min-width: 500px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  border-radius: 20px;
+}
+body .container .form-default .form-heading .heading-text h1 {
+  text-align: center;
+  font-size: 2.2rem;
+  color: #0a6d9d;
+}
+body .container .form-default .form-body .form-control {
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0;
+}
+body .container .form-default .form-body .form-control .invalid-feedback {
+  color: rgb(255, 0, 0);
+  font-size: 1.1rem;
+  text-align: center;
+}
+body .container .form-default .form-body .form-control label {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+body .container .form-default .form-body .form-control input {
+  padding: 10px 15px;
+  outline: none;
+  border: solid 1px black;
+  font-size: 1rem;
+}
+body .container .form-default .form-body .form-control input:focus {
+  outline: none;
+}
+body .container .form-default .form-body .form-control .button {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+body .container .form-default .form-body .form-control .button button {
+  width: 100%;
+  padding: 15px 0;
+  background-color: #0a6d9d;
+  color: #EAEBED;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+}/*# sourceMappingURL=adminlogin.css.map */

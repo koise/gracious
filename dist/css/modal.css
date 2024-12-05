@@ -1,0 +1,131 @@
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #EAEBED;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+}
+
+#add-container, #validation-error {
+  display: none;
+}
+
+.text-danger {
+  text-align: start !important;
+  margin-top: 10px;
+  color: red;
+  font-size: 1rem;
+  border: 2px solid rgb(255, 147, 147);
+  background-color: rgb(255, 200, 200);
+  width: 100%;
+  padding-left: 30px;
+}
+.text-danger li {
+  list-style: disc;
+  margin: 5px 0;
+}
+
+#updateModal, #addModal, #acceptModal, #rejectModal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+#updateModal .modal, #addModal .modal, #acceptModal .modal, #rejectModal .modal {
+  background-color: #EAEBED;
+  padding: 10px 0;
+  border-radius: 10px;
+  width: 450px;
+  text-align: center;
+}
+#updateModal .modal .form-header, #addModal .modal .form-header, #acceptModal .modal .form-header, #rejectModal .modal .form-header {
+  display: flex;
+  justify-content: flex-end;
+}
+#updateModal .modal .form-header #add-close-modal, #updateModal .modal .form-header #update-close-modal, #updateModal .modal .form-header #accept-close-modal, #updateModal .modal .form-header #reject-close-modal, #addModal .modal .form-header #add-close-modal, #addModal .modal .form-header #update-close-modal, #addModal .modal .form-header #accept-close-modal, #addModal .modal .form-header #reject-close-modal, #acceptModal .modal .form-header #add-close-modal, #acceptModal .modal .form-header #update-close-modal, #acceptModal .modal .form-header #accept-close-modal, #acceptModal .modal .form-header #reject-close-modal, #rejectModal .modal .form-header #add-close-modal, #rejectModal .modal .form-header #update-close-modal, #rejectModal .modal .form-header #accept-close-modal, #rejectModal .modal .form-header #reject-close-modal {
+  cursor: pointer;
+  padding: 20px 20px 0 20px;
+  font-size: 20px;
+}
+#updateModal .modal .form-content h2, #addModal .modal .form-content h2, #acceptModal .modal .form-content h2, #rejectModal .modal .form-content h2 {
+  font-size: 2rem;
+  margin-top: 10px;
+}
+#updateModal .modal .form-content form, #addModal .modal .form-content form, #acceptModal .modal .form-content form, #rejectModal .modal .form-content form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+#updateModal .modal .form-content form .form-control, #addModal .modal .form-content form .form-control, #acceptModal .modal .form-content form .form-control, #rejectModal .modal .form-content form .form-control {
+  width: 100%;
+  margin: 10px 0;
+}
+#updateModal .modal .form-content form .form-control p, #addModal .modal .form-content form .form-control p, #acceptModal .modal .form-content form .form-control p, #rejectModal .modal .form-content form .form-control p {
+  font-size: 1.2rem;
+}
+#updateModal .modal .form-content form .form-control input, #addModal .modal .form-content form .form-control input, #acceptModal .modal .form-content form .form-control input, #rejectModal .modal .form-content form .form-control input {
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #42434a;
+}
+#updateModal .modal .form-content form .form-control input:focus, #addModal .modal .form-content form .form-control input:focus, #acceptModal .modal .form-content form .form-control input:focus, #rejectModal .modal .form-content form .form-control input:focus {
+  outline: none;
+}
+#updateModal .modal .form-content form .form-control select, #addModal .modal .form-content form .form-control select, #acceptModal .modal .form-content form .form-control select, #rejectModal .modal .form-content form .form-control select {
+  padding: 10px;
+  width: 100%;
+}
+#updateModal .modal .form-content form .form-control .custom-file-input::-webkit-file-upload-button, #addModal .modal .form-content form .form-control .custom-file-input::-webkit-file-upload-button, #acceptModal .modal .form-content form .form-control .custom-file-input::-webkit-file-upload-button, #rejectModal .modal .form-content form .form-control .custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+#updateModal .modal .form-content form .form-control .custom-file-input::before, #addModal .modal .form-content form .form-control .custom-file-input::before, #acceptModal .modal .form-content form .form-control .custom-file-input::before, #rejectModal .modal .form-content form .form-control .custom-file-input::before {
+  content: "Select some files";
+  display: inline-block;
+  background: linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 700;
+  font-size: 10pt;
+}
+#updateModal .modal .form-content form .form-control .custom-file-input:hover::before, #addModal .modal .form-content form .form-control .custom-file-input:hover::before, #acceptModal .modal .form-content form .form-control .custom-file-input:hover::before, #rejectModal .modal .form-content form .form-control .custom-file-input:hover::before {
+  border-color: black;
+}
+#updateModal .modal .form-content form .form-control .custom-file-input:active::before, #addModal .modal .form-content form .form-control .custom-file-input:active::before, #acceptModal .modal .form-content form .form-control .custom-file-input:active::before, #rejectModal .modal .form-content form .form-control .custom-file-input:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+#updateModal .modal .form-content form .form-control:last-of-type, #addModal .modal .form-content form .form-control:last-of-type, #acceptModal .modal .form-content form .form-control:last-of-type, #rejectModal .modal .form-content form .form-control:last-of-type {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+#updateModal .modal .form-content form .form-control:last-of-type button, #addModal .modal .form-content form .form-control:last-of-type button, #acceptModal .modal .form-content form .form-control:last-of-type button, #rejectModal .modal .form-content form .form-control:last-of-type button {
+  border: none;
+  background-color: #0a6d9d;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+}/*# sourceMappingURL=modal.css.map */

@@ -1,0 +1,118 @@
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #EAEBED;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+}
+
+@media only screen and (min-width: 1440px) {
+  .sidebar {
+    width: 250px;
+    min-height: 100vh;
+    padding: 5px 1em;
+    background-color: #11121a;
+    border-right: 1px solid #42434a;
+    overflow-x: hidden;
+    transition: 300ms ease-in-out;
+  }
+  .sidebar.close {
+    padding: 5px;
+    width: 60px;
+    min-width: 0;
+  }
+  .sidebar ul {
+    list-style: none;
+  }
+  .sidebar ul li:first-child {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+  .sidebar ul li:first-child .logo {
+    font-weight: 600;
+  }
+  .sidebar ul li:first-child button {
+    background-color: #11121a;
+    border: none;
+    text-decoration: none;
+    margin: 0 10px;
+    cursor: pointer;
+  }
+  .sidebar ul li a.active {
+    color: #0a6d9d;
+    border-right: 4px solid #0a6d9d;
+    border-bottom: 1px solid #42434a;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  .sidebar ul li a.active svg {
+    fill: #0a6d9d;
+  }
+  .sidebar ul li a span, .sidebar ul li .dropdown-btn span {
+    flex-grow: 1;
+    padding-left: 20px;
+  }
+  .sidebar ul li a:hover, .sidebar ul li .dropdown-btn:hover {
+    background-color: #222533;
+  }
+  .sidebar ul li .sub-menu {
+    transition: max-height 150ms ease-in-out, opacity 150ms ease-in-out;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+  .sidebar ul li .sub-menu li a {
+    padding-left: 50px;
+    margin: 0;
+  }
+  .sidebar ul li .sub-menu.show {
+    opacity: 1;
+    max-height: 500px;
+  }
+  .sidebar a, .sidebar .logo {
+    border-radius: 0.5em;
+    padding: 0.85em;
+    text-decoration: none;
+    color: #EAEBED;
+    display: flex;
+    align-items: center;
+    margin: 1em 0;
+  }
+  .sidebar .dropdown-btn {
+    border-radius: 0.5em;
+    padding: 0.85em;
+    text-decoration: none;
+    color: #EAEBED;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    background-color: #11121a;
+    border: none;
+    cursor: pointer;
+  }
+  .sidebar .dropdown-btn.rotate svg:last-child {
+    rotate: 180deg;
+  }
+  .sidebar svg {
+    flex-shrink: 0;
+    fill: #EAEBED;
+    transition: rotate 150ms ease;
+  }
+}
+@media only screen and (max-width: 1439px) {
+  .sidebar {
+    display: none;
+  }
+}/*# sourceMappingURL=sidebar.css.map */

@@ -1,0 +1,132 @@
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #EAEBED;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+}
+
+main {
+  width: 100%;
+}
+
+.wrapper {
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  max-width: 1980px;
+  background: #EAEBED;
+}
+.container .content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.container .content .content-header {
+  display: flex;
+  flex-direction: column;
+}
+.container .content .content-header .content-header-heading {
+  display: flex;
+  min-height: 150px;
+  padding: 40px 20px;
+}
+.container .content .content-header .content-header-heading h1 {
+  font-size: 1.2rem;
+}
+.container .content .content-header .content-header-heading h1 span {
+  font-size: 1.2rem;
+  color: #0a6d9d;
+}
+.container .content .content-header .content-header-body {
+  display: flex;
+  justify-content: space-around;
+}
+.container .content .content-header .content-header-body .total {
+  display: flex;
+  align-items: center;
+  flex: 1 1 500px;
+  margin: 0 20px;
+  height: 150px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border-top: 10px solid #0a6d9d;
+  border-radius: 20px;
+}
+.container .content .content-header .content-header-body .total .total-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 0 0 10%;
+  flex: 1;
+}
+.container .content .content-header .content-header-body .total .total-header h2 {
+  font-size: 2rem;
+}
+.container .content .content-header .content-header-body .total .total-header p {
+  font-size: 1rem;
+  color: #42434a;
+}
+.container .content .content-header .content-header-body .total .total-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+}
+.container .content .content-header .content-header-body .total .total-body svg {
+  width: 30%;
+  height: auto;
+  fill: #0a6d9d;
+}
+.container .content .content-body {
+  flex: 1;
+  padding: 40px;
+  justify-content: center;
+}
+.container .content .content-body .graphbox {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  max-height: 500px;
+}
+.container .content .content-body .graphbox .box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  margin: 0 20px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.container .content .content-body .graphbox .box:nth-child(1) {
+  flex: 1 1 300px;
+}
+.container .content .content-body .graphbox .box:nth-child(2) {
+  flex: 1 1 600px;
+}
+.container .content .content-body .graphbox .box canvas {
+  width: 100%;
+  overflow: hidden;
+}
+.container .upcoming-appointments {
+  display: flex;
+  width: 300px;
+}/*# sourceMappingURL=admindashboard.css.map */
