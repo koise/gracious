@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('username')->unique();
             $table->string('number')->unique();
-            $table->string('role');
-            $table->enum('status', ['Activated', 'Deactivated'])->default('Activated');;
+            $table->enum('role', ['Admin', 'Doctor', 'Staff'])->default('Admin');
+            $table->enum('status', ['Activated', 'Deactivated'])->default('Activated');
             $table->string('password');
             $table->timestamps();
         });

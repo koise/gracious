@@ -17,15 +17,13 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('username')->unique();
             $table->boolean('number_verified')->default(false);
-            $table->string('age');
+            $table->unsignedInteger('age'); // Age should be an integer
             $table->string('number')->unique();
             $table->string('street_address');
-            $table->string('city');
-            $table->string('province');
-            $table->string('country');
-            $table->enum('status', ['Activated', 'Deactivated'])->default('Activated');
+            $table->unsignedInteger('city_id');
+            $table->unsignedInteger('province_id');
+            $table->enum('status', ['Activated', 'Deactivated'])->default('Deactivated');
             $table->string('password');
-            $table->rememberToken();
             $table->timestamps();
         });
 

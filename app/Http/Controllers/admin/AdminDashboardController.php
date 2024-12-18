@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\User;
 use App\Models\Employee;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class AdminDashboardController extends Controller
@@ -19,42 +20,143 @@ class AdminDashboardController extends Controller
 
     public function getDemographicData()
     {
-        $appointmentsToday = Appointment::whereDate('appointment_date', today())->count();
+        // Optimize by combining queries
+        $statuses = Appointment::selectRaw("
+            COUNT(*) AS total_appointments,
+            SUM(status = 'Pending') AS total_pending,
+            SUM(status = 'Missed') AS total_missed,
+            SUM(status = 'Accepted') AS total_accepted,
+            SUM(status = 'Rejected') AS total_rejected,
+            SUM(status = 'Ongoing') AS total_ongoing,
+            SUM(status = 'Completed') AS total_completed,
+            SUM(status = 'Cancelled') AS total_cancelled
+        ")
+            ->first();
+
+        $appointmentsToday = Appointment::whereDate('appointment_date', now())->count();
         $totalUsers = User::count();
-        $totalDoctors = Employee::where('role', 'doctor')->count();
+        $totalDoctors = Employee::count();
 
         return response()->json([
+            'totalAppointments' => $statuses->total_appointments,
+            'totalPending' => $statuses->total_pending,
+            'totalMissed' => $statuses->total_missed,
+            'totalAccepted' => $statuses->total_accepted,
+            'totalRejected' => $statuses->total_rejected,
+            'totalOngoing' => $statuses->total_ongoing,
+            'totalCompleted' => $statuses->total_completed,
+            'totalCancelled' => $statuses->total_cancelled,
             'appointmentsToday' => $appointmentsToday,
             'totalUsers' => $totalUsers,
             'totalDoctors' => $totalDoctors,
-        ]);
+        ], 200);
     }
-    public function getChartData()
+    public function getLineChartData(Request $request)
     {
-        // Fetch user registration data by day of the current month
-        $userData = Appointment::whereMonth('appointment_date', Carbon::now()->month)
-            ->selectRaw('DAY(appointment_date) as day, COUNT(*) as count')
-            ->groupBy('day')
-            ->orderBy('day')
-            ->get();
+        $filter = $request->filter;
+        $startDate = null;
+        $endDate = Carbon::now()->toDateString(); // Current date as the end date
 
-        // Convert day numbers to day names (e.g., 1 -> January)
-        $labels = $userData->map(function ($item) {
-            return date("j", mktime(0, 0, 0, Carbon::now()->month, $item->day));
-        });
+        switch ($filter) {
+            case 'less_than_a_week':
+                $startDate = Carbon::now()->subDays(6)->toDateString(); // Last 7 days
+                break;
+            case 'less_than_a_month':
+                $startDate = Carbon::now()->subDays(29)->toDateString(); // Last 30 days
+                break;
+            case 'less_than_a_year':
+                $startDate = Carbon::now()->subYear()->startOfYear()->toDateString(); // Start of the current year
+                break;
+            default:
+                return response()->json(['error' => 'Invalid filter'], 400);
+        }
 
-        $counts = $userData->pluck('count')->toArray();
+        // Fetch data
+        if ($filter === 'less_than_a_year') {
+            $userData = Appointment::whereBetween('appointment_date', [$startDate,  Carbon::now()->endOfMonth()])
+                ->selectRaw('MONTH(appointment_date) as month, COUNT(*) as count')
+                ->groupBy('month') // Group by both year and month
+                ->get();
+        } else {
+            $userData = Appointment::whereBetween('appointment_date', [$startDate, $endDate])
+                ->selectRaw('appointment_date as date, COUNT(*) as count')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+        }
 
-        // Fetch appointment data for the current month
-        $startOfMonth = Carbon::now()->startOfMonth();
-        $endOfMonth = Carbon::now()->endOfMonth();
+        $labels = [];
+        switch ($filter) {
+            case 'less_than_a_week':
+                $labels = $this->generateDateRangeLabels($startDate, $endDate, 'M d'); // Format: Dec 1
+                break;
+            case 'less_than_a_month':
+                $labels = $this->generateDateRangeLabels($startDate, $endDate, 'M d'); // Format: Dec 1
+                break;
+            case 'less_than_a_year':
+                $labels = $this->generateDateRangeLabels($startDate, $endDate, 'M'); // Format: Jan, Feb, etc.
+                break;
+        }
 
-        $doughnutData = Appointment::whereBetween('appointment_date', [$startOfMonth, $endOfMonth])
+        // Map counts to labels
+        $counts = array_fill(0, count($labels), 0);
+        foreach ($userData as $data) {
+            $date = Carbon::parse($data->date)->format($filter === 'less_than_a_year' ? 'M' : 'M d');
+            $index = array_search($date, $labels);
+            if ($index !== false) {
+                $counts[$index] = $data->count;
+            }
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'appointmentCounts' => $counts,
+        ], 200);
+    }
+
+    /**
+     * Generate a range of labels between two dates with a specified format.
+     */
+    private function generateDateRangeLabels($startDate, $endDate, $format)
+    {
+        $labels = [];
+        $currentDate = Carbon::parse($startDate);
+
+        while ($currentDate->lte(Carbon::parse($endDate))) {
+            $labels[] = $currentDate->format($format);
+            $currentDate->addDay();
+        }
+
+        return array_values(array_unique($labels));
+    }
+
+    public function getDoughnutChartData(Request $request)
+    {
+        $filter = $request->filter;
+        $startDate = null;
+        $endDate = Carbon::now()->toDateString(); // Current date as the end date
+
+        switch ($filter) {
+            case 'less_than_a_week':
+                $startDate = Carbon::now()->subDays(6)->toDateString(); // Last 7 days
+                break;
+            case 'less_than_a_month':
+                $startDate = Carbon::now()->subDays(29)->toDateString(); // Last 30 days
+                break;
+            case 'less_than_a_year':
+                $startDate = Carbon::now()->subYear()->startOfYear()->toDateString(); // Start of the current year
+                break;
+            default:
+                return response()->json(['error' => 'Invalid filter'], 400);
+        }
+
+        // Fetch data based on filter range
+        $doughnutData = Appointment::whereBetween('appointment_date', [$startDate, $endDate])
             ->selectRaw('
             CASE
-                WHEN status IN ("missed", "cancelled", "rejected") THEN "Missed/Cancelled/Rejected"
-                WHEN status = "completed" THEN "Completed"
-                WHEN status IN ("accepted", "ongoing") THEN "Accepted/Ongoing"
+                WHEN status IN ("Missed", "Cancelled", "Rejected") THEN "Missed/Cancelled/Rejected"
+                WHEN status = "Completed" THEN "Completed"
+                WHEN status IN ("Accepted", "Ongoing") THEN "Accepted/Ongoing"
                 ELSE "Pending"
             END as status_group,
             COUNT(*) as count
@@ -63,11 +165,18 @@ class AdminDashboardController extends Controller
             ->pluck('count', 'status_group')
             ->toArray();
 
-        // Return JSON data for charts
+        // Ensure all groups are present in the response
+        $defaultGroups = [
+            "Missed/Cancelled/Rejected" => 0,
+            "Completed" => 0,
+            "Accepted/Ongoing" => 0,
+            "Pending" => 0,
+        ];
+
+        $doughnutData = array_merge($defaultGroups, $doughnutData);
+
         return response()->json([
-            'labels' => $labels,
-            'appointmentCounts' => $counts,
             'doughnutData' => $doughnutData
-        ]);
+        ], 200);
     }
 }

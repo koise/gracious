@@ -1,105 +1,257 @@
 import axios from 'axios';
+import { Dropzone } from "dropzone";
 
+let selectedID = '';
 
-document.addEventListener('DOMContentLoaded', function () {
+function renderPagination(currentPage, lastPage, paginationWrapper) {
+    const maxVisibleButtons = 3; 
+    let startPage, endPage;
 
-    function fetchRecords() {
-        axios.post('/admin/patient/record/populate')
-            .then(response => {
-                const records = response.data;
-                const tableBody = document.getElementById('patientRecordTableBody');
-                tableBody.innerHTML = '';
-                records.forEach(record => {
-                    const createdAt = new Date(record.created_at).toISOString().split('T')[0];
-                    const row = `
-                        <tr>
-                            <td>${record.id}</td>
-                            <td>${record.name}</td>
-                            <td>${createdAt}</td>
-                            <td>
-                                <button id="edit-btn-${record.id}" data-id="${record.id}" class="edit-btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
-                                        <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
-                                    </svg>
-                                </button>
-                            </td>
-                            <td>
-                                <button id="edit-btn-${record.id}" data-id="${record.id}" class="edit-btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
-                                        <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
-                                    </svg>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    tableBody.innerHTML += row;
-                });
-            })
-            .catch(error => {
-                console.error('There was an error fetching the records!', error);
-            });
+    if (lastPage <= maxVisibleButtons) {
+        startPage = 1;
+        endPage = lastPage;
+    } else {
+        startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        endPage = startPage + maxVisibleButtons - 1;
+
+        if (endPage > lastPage) {
+            endPage = lastPage;
+            startPage = endPage - maxVisibleButtons + 1;
+        }
     }
 
-    fetchRecords();
+    paginationWrapper.empty();
 
-    // Add record button click
-    $(document).on('click', '#add-btn', function () {
-        // Clear form fields and any previous error messages
-        $('#addForm')[0].reset();
-        $('#validation-errors').empty();
-        $('.success-message').hide();
+    paginationWrapper.append(currentPage > 1
+        ? `<button class="pagination-link" data-page="${currentPage - 1}">Previous</button>`
+        : `<button class="pagination-link disabled" disabled>Previous</button>`);
 
-        // Show the modal
-        $('#addModal').fadeIn().css("display", "flex");
+    for (let i = startPage; i <= endPage; i++) {
+        const activeClass = i === currentPage ? 'active' : '';
+        paginationWrapper.append(`
+            <button class="pagination-link ${activeClass}" data-page="${i}">${i}</button>
+        `);
+    }
+
+    paginationWrapper.append(currentPage < lastPage
+        ? `<button class="pagination-link" data-page="${currentPage + 1}">Next</button>`
+        : `<button class="pagination-link disabled" disabled>Next</button>`);
+}
+
+
+function renderUserTableRows(users, $tableBody) {
+    $tableBody.empty();
+    if (users.length === 0) {
+        const noUsersRow = `
+            <tr>
+                <td colspan="6">No Users Found</td>
+            </tr>
+        `;
+        $tableBody.append(noUsersRow);
+    } else {
+        users.forEach(user => {
+            const isChecked = selectedID === user.id ? 'checked' : ''; 
+            const row = `
+            <tr>
+                <td><input type="radio" data-id="${user.id}" name="id" class="radio-btn" ${isChecked} /></td>
+                <td>${user.id}</td>
+                <td>${user.first_name} ${user.last_name}</td>
+                <td>${user.username}</td>
+                <td>${user.number}</td>
+            </tr>
+            `;
+            $tableBody.append(row);
+        });
+    }
+}
+
+function fetchRecord(procedures, medical_records, container) {
+    container.empty();
+    if(procedures.length === 0) {
+        const button = `<tr><td colspan="6"><label class="add-record">+</label></td></tr>`;
+        container.append(button);
+        $('#img-view img[data-dz-thumbnail]').attr('src', '/images/upload.png').removeClass('show');
+    } else {
+        procedures.forEach(procedure => {
+            const row = `
+                <tr>
+                    <td><input class="procedure-id" type="text" value="${procedure.id}" hidden /><input class="appointment-date" type="date" value="${procedure.appointment_date || ''}" /></td>
+                    <td><input class="procedure-name" type="text" value="${procedure.procedure || ''}" /></td>
+                    <td><input class="amount-input" type="text" value="${procedure.amount !== null ? procedure.amount : ' '}" class="amount-input" /></td>
+                    <td><input class="paid-input" type="text" value="${procedure.paid !== null ? procedure.paid : ' '}" class="paid-input" /></td>
+                    <td>
+                        <input type="text" 
+                            value="${procedure.balance !== null ? procedure.balance : (procedure.amount - procedure.paid) || ' '}" 
+                            class="balance-input" 
+                            ${procedure.balance !== null ? procedure.balance : 'disabled'} 
+                        />
+                    </td>
+                    <td><label class="delete-btn" data-id="${procedure.id}"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></label></td>
+                </tr>
+            `;
+            container.append(row);
+        });
+
+        const button = `<tr><td colspan="6"><label class="add-record">+</label></td></tr>`;
+        container.append(button);
+        if(medical_records.length > 0) {
+            medical_records.forEach(record => {
+                $('#img-view img[data-dz-thumbnail]').attr('src', '/' + record.file_path).addClass('show');
+            });   
+        } else {
+            $('#img-view img[data-dz-thumbnail]').attr('src', '/images/upload.png').removeClass('show');
+        }
+    }
+}
+
+function fetchUsers(page = 1, search = '') {
+    axios.post(`/admin/record/user/populate?page=${page}&search=${search}`)
+        .then(response => {
+            const users = response.data.data;
+            const $tableBody = $('#userTableBody');
+            const $paginationWrapper = $('#userPagination');
+            
+            renderUserTableRows(users, $tableBody);
+
+            renderPagination(response.data.current_page, response.data.last_page, $paginationWrapper, (page) => {
+                fetchUsers(page, search);
+            });
+        })
+        .catch(error => console.error('Error fetching users!', error));
+}
+
+$(document).ready(() => {
+    fetchUsers();
+
+    $(document).on('input', '.amount-input, .paid-input', function() {
+        const row = $(this).closest('tr');
+        const amount = parseFloat(row.find('.amount-input').val()) || 0;
+        const paid = parseFloat(row.find('.paid-input').val()) || 0;
+        const balance = amount - paid;
+    
+        row.find('.balance-input').val(balance.toFixed(2));
     });
 
-    // Close modal
-    $('#add-close-modal').click(function () {
-        $('#addModal').fadeOut();
+    $('#searchInput').on('input', function () {
+        const search = $(this).val();
+        fetchUsers(1, search);
     });
 
-    // Form submit handling with Axios
-    $('#addForm').submit(function (e) {
+    $(document).on('click', '.pagination-link', function () {
+        const page = $(this).data('page');
+        const search = $('#searchInput').val();
+        if (!$(this).hasClass('disabled')) {
+            fetchUsers(page, search);
+        }
+    });
+
+    $(document).on('submit', '#procedureForm', function (e) {
         e.preventDefault();
+    
+        const data = [];
+    
+        $('#procedureTableBody tr').not(':last').each(function () {
+            const row = $(this);
+            const procedureId = row.find('.procedure-id').val(); 
+            const appointmentDate = row.find('.appointment-date').val();
+            const procedureName = row.find('.procedure-name').val();
+            const amount = row.find('.amount-input').val();
+            const paid = row.find('.paid-input').val();
+            const balance = row.find('.balance-input').val();
+            data.push({
+                id: procedureId,
+                appointment_date: appointmentDate,
+                procedure: procedureName,
+                amount: amount,
+                paid: paid,
+                balance: balance
+            });
+        });
+        
+        dropzone.processQueue();
 
-        const formData = new FormData(this);
-
-        axios.post('/admin/patient/record/store', formData)
+        axios.post('/admin/record/save', { procedures: data })
             .then(response => {
-                console.log('Record added successfully:', response.data);
-                fetchRecords();
-                // Fetch updated records and close modal
-                $('#addModal').fadeOut();
-
-                // Display success alert
-                alert('Record added successfully!');
+                alert('Record saved successfully!');
+                $(`.radio-btn[data-id="${selectedID}"]`).prop('checked', true).trigger('change');
             })
             .catch(error => {
-                if (error.response && error.response.status === 422) {
-                    const errors = error.response.data.errors;
-
-                    const divContainer = document.getElementById('validation-error');
-                    const errorContainer = document.getElementById('validation-errors');
-                    if (errorContainer) {
-                        errorContainer.innerHTML = '';
-
-                        // Display new validation errors
-                        Object.values(errors).forEach(errorList => {
-                            errorList.forEach(errorMessage => {
-                                const errorItem = document.createElement('li');
-                                errorItem.textContent = errorMessage;
-                                errorContainer.appendChild(errorItem);
-                            });
-                        });
-
-                        // Display error container if hidden
-                        divContainer.style.display = 'block';
-                    } else {
-                        console.error('Validation error container not found.');
-                    }
-                } else {
-                    console.error('Error adding record:', error);
-                }
+                console.error('Error saving record!', error);
             });
     });
+
+    $(document).on('click', '.add-record', function () {
+        axios.post('/admin/record/add', {user_id: selectedID})
+            .then(response => {
+                $(`.radio-btn[data-id="${selectedID}"]`).prop('checked', true).trigger('change');
+            })
+            .catch(error => console.error('Error adding record!', error));
+    });
+
+    $(document).on('click', '.delete-btn', function () {
+        const recordID = $(this).data('id');
+        axios.post('/admin/record/delete', {record_id: recordID})
+            .then(response => {
+                $(`.radio-btn[data-id="${selectedID}"]`).prop('checked', true).trigger('change');
+            })
+            .catch(error => console.error('Error adding record!', error));
+    });
+
+
+    $(document).on('change', '.radio-btn', function () {
+        const userId = $(this).data('id');
+        selectedID = userId;
+        const isChecked = $(this).is(':checked');
+        const saveBtn = $('.save-btn');
+        const dropArea = $('#drop-area');
+        const container = $('#procedureTableBody');
+        if (isChecked) {
+            axios.post('/admin/record/populate', { user_id: userId })
+                .then(response => {
+                    const { procedures, medical_records } = response.data.data; 
+                    fetchRecord(procedures, medical_records, container);
+                    saveBtn.show();
+                    dropArea.show()
+                })
+                .catch(error => console.error('Error fetching records!', error));
+        } else {
+            $('#procedureTableBody').empty(); 
+            $('#drop-area').hide(); 
+        }
+    });
+
+    const dropzone = new Dropzone(".dropzone", {
+        url: "/admin/record/store",  
+        autoProcessQueue: false,
+        acceptedFiles: "image/*",
+        maxFiles: 1,
+        previewsContainer: "#img-view",
+        disablePreviews: true,
+        clickable: "#drop-area",
+        addRemoveLinks: true,
+        thumbnailWidth: 400,   // Set a higher resolution for the thumbnail
+        thumbnailHeight: 500, 
+        init: function () {
+            const defaultMessage = document.querySelector(".dz-default.dz-message");
+            const dzInstance = this;
+
+            this.on("thumbnail", (file, dataUrl) => {
+                $("#img-view img[data-dz-thumbnail]").attr("src", dataUrl).addClass('show');
+            });
+
+            this.on("sending", function (file, xhr, formData) {
+                formData.append('id', selectedID);
+                formData.append('_token', $('meta[name="csrf-token"]').attr('content')); 
+            });
+
+            this.on("success", (file, response) => {
+                console.log("File uploaded successfully!", response);
+            });
+
+            this.on("error", (file, errorMessage) => {
+                console.error("Upload failed!", errorMessage);
+            });
+        },
+    });
+
 });

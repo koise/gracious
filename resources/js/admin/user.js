@@ -1,23 +1,37 @@
 import axios from 'axios';
 
-function renderPagination(currentPage, lastPage, $paginationWrapper, onPageClick) {
-    const startPage = Math.max(1, currentPage - 1);
-    const endPage = Math.min(lastPage, currentPage + 1);
+function renderPagination(currentPage, lastPage, paginationWrapper, onPageClick) {
+    const maxVisibleButtons = 3; 
+    let startPage, endPage;
 
-    $paginationWrapper.empty();
+    if (lastPage <= maxVisibleButtons) {
+        startPage = 1;
+        endPage = lastPage;
+    } else {
+        startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        endPage = startPage + maxVisibleButtons - 1;
 
-    $paginationWrapper.append(currentPage > 1
+        if (endPage > lastPage) {
+            endPage = lastPage;
+            startPage = endPage - maxVisibleButtons + 1;
+        }
+    }
+
+    paginationWrapper.empty();
+
+
+    paginationWrapper.append(currentPage > 1
         ? `<button class="pagination-link" data-page="${currentPage - 1}">Previous</button>`
         : `<button class="pagination-link disabled" disabled>Previous</button>`);
 
     for (let i = startPage; i <= endPage; i++) {
         const activeClass = i === currentPage ? 'active' : '';
-        $paginationWrapper.append(`
+        paginationWrapper.append(`
             <button class="pagination-link ${activeClass}" data-page="${i}">${i}</button>
         `);
     }
 
-    $paginationWrapper.append(currentPage < lastPage
+    paginationWrapper.append(currentPage < lastPage
         ? `<button class="pagination-link" data-page="${currentPage + 1}">Next</button>`
         : `<button class="pagination-link disabled" disabled>Next</button>`);
 }

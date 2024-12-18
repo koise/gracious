@@ -25,21 +25,11 @@
                     {{-- Form to Send OTP --}}
                     <form id="otpForm" method="POST">
                         @csrf
-                        @if ($errors->any())
-                            <div class="form-control">
-                                <ul class="text-danger">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
                         <div class="form-control">
                             <div class="phone-number">
                                 <span class="input-group-addon">+63</span>
                                 <input type="text" id="number" name="number"
-                                    value="{{ $phoneNumber ?? old('number') }}" placeholder="Number"
-                                    @if ($errors->has('number')) autofocus @endif required>
+                                    value="{{ $phoneNumber ?? old('number') }}" placeholder="Number" required>
                             </div>
                             <button type="submit" id="generateBtn">Send OTP</button>
                         </div>
@@ -50,7 +40,7 @@
                         @csrf
                         <input type="hidden" name="number" id="otpNumber">
                         <div class="form-control">
-                            <input type="text" id="otp" name="otp" placeholder="Enter OTP">
+                            <input type="text" id="otp" name="otp" placeholder="Enter OTP" required>
                         </div>
                         <div class="form-control">
                             <button type="submit" id="verifyBtn">Submit</button>

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AdminEmployeeController extends Controller
 {
@@ -22,7 +23,8 @@ class AdminEmployeeController extends Controller
         $loggedInUserId = Auth::guard('admin')->id();
 
         $query = Employee::where('status', 'activated')
-            ->where('id', '!=', $loggedInUserId);
+            ->where('id', '!=', $loggedInUserId)
+            ->orderBy('updated_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->get('search');
@@ -38,7 +40,10 @@ class AdminEmployeeController extends Controller
 
     public function fetchDeactiveEmployees(Request $request)
     {
-        $query = Employee::where('status', 'deactivated');
+        $loggedInUserId = Auth::guard('admin')->id();
+        $query = Employee::where('status', 'deactivated')
+            ->where('id', '!=', $loggedInUserId)
+            ->orderBy('updated_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->get('search');
@@ -64,45 +69,44 @@ class AdminEmployeeController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'username' => 'required|unique:employees',
-            'number' => 'required|unique:employees|min:11|max:11',
+            'number' => 'required|unique:employees|min:10|max:11',
             'role' => ['required', 'string', 'in:Admin,Doctor,Staff'],
         ], [
             'username.unique' => 'Username already exists.',
             'number.unique' => 'Phone number already taken.',
-            'confirm_password.same' => 'The password confirmation does not match.',
         ]);
 
-        if ($validator->passes()) {
-            $employee = new Employee();
-            $employee->first_name = Str::title($request->input('first_name'));
-            $employee->last_name = Str::title($request->input('last_name'));
-            $employee->number = $request->input('number');
-            $employee->role = $request->input('role');
-            $employee->username = strtolower($request->input('username'));
-
-            $password = 'GRACIOUS-CLINIC-' . Str::upper($request->input('last_name'));
-            $employee->password = bcrypt($password);
-
-            $employee->save();
-
-            return response()->json([$employee]);
-        } else {
-            return response()->json(['errors' => $validator->errors()], 422);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
         }
+        $validated = $validator->validated();
+        $employee = Employee::create([
+            'first_name' => Str::title($validated['first_name']),
+            'last_name' => Str::title($validated['last_name']),
+            'number' => $validated['number'],
+            'role' => $validated['role'],
+            'username' => $validated['username'],
+            'password' => Hash::make('GRACIOUS-CLINIC-' . Str::upper($request->input('last_name'))),
+        ]);
+
+
+        return response()->json([], 200);
     }
 
     public function update(Request $request)
     {
-        $data = Employee::findOrFail($request->id);
+        $employee = Employee::findOrFail($request->id);
 
         $validator = Validator::make($request->all(), [
             'username' => [
                 'required',
-                Rule::unique('employees')->ignore($data->id),
+                Rule::unique('employees')->ignore($employee->id),
             ],
             'number' => [
                 'required',
-                Rule::unique('employees')->ignore($data->id),
+                Rule::unique('employees')->ignore($employee->id),
             ],
 
             'first_name' => 'required',
@@ -118,36 +122,43 @@ class AdminEmployeeController extends Controller
             'number.unique' => 'Phone number already exists.',
         ]);
 
-        if ($validator->passes()) {
-            $data->first_name = Str::title($request->first_name);
-            $data->last_name = Str::title($request->last_name);
-            $data->username = $request->username;
-            $data->number = $request->number;
-            $data->role = $request->role;
-
-            $data->save();
-
-            return response()->json($data);
-        } else {
-            return response()->json(['errors' => $validator->errors()], 422);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
         }
+        $validated = $validator->validated();;
+
+        $employee->update([
+            'first_name' => Str::title($validated['first_name']),
+            'last_name' => Str::title($validated['last_name']),
+            'number' => $validated['number'],
+            'role' => $validated['role'],
+            'username' => $validated['username'],
+        ]);
+
+        return response()->json([], 200);
     }
 
     public function deactivate(Request $request)
     {
-        $data = Employee::findOrFail($request->id);
-        $data->status = 'Deactivated';
-        $data->save();
+        $employee = Employee::findOrFail($request->id);;
 
-        return response()->json($data);
+        $employee->update([
+            'status' => 'Deactivated',
+        ]);
+
+        return response()->json([], 200);
     }
 
     public function activate(Request $request)
     {
-        $data = Employee::findOrFail($request->id);
-        $data->status = 'Activated';
-        $data->save();
+        $employee = Employee::findOrFail($request->id);
 
-        return response()->json($data);
+        $employee->update([
+            'status' => 'Activated',
+        ]);
+
+        return response()->json([], 200);
     }
 }

@@ -1,5 +1,5 @@
-@use '../variables' as v;
-@import '../general.scss';
+@use "../variables" as v;
+@import "../general.scss";
 
 main {
     width: 100%;
@@ -25,7 +25,8 @@ main {
                 display: flex;
                 min-height: 150px;
                 padding: 40px 40px;
-                h1, span {
+                h1,
+                span {
                     font-size: 1.5rem;
 
                     span {
@@ -37,13 +38,12 @@ main {
             .content-header-body {
                 display: flex;
                 flex: 1;
-                justify-content: space-around;
-                padding: 20px;
+                padding: 0 40px;
+                gap: 20px;
                 .total {
                     display: flex;
                     align-items: center;
-                    flex: 1 1 500px;
-                    margin: 0 20px;
+                    flex: 1;
                     height: 150px;
                     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
                     border-top: 10px solid v.$primary;
@@ -74,7 +74,7 @@ main {
 
                         svg {
                             width: 30%;
-                            height: auto; 
+                            height: auto;
                             fill: v.$primary;
                         }
                     }
@@ -105,6 +105,14 @@ main {
                     border-radius: 20px;
                     overflow: hidden;
                     flex: 1;
+                    select {
+                        padding: 5px 10px;
+                        margin: 10px 0;
+                        border: 1px solid v.$line;
+                        &:focus {
+                            outline: none;
+                        }
+                    }
                     canvas {
                         width: 100%;
                         overflow: hidden;

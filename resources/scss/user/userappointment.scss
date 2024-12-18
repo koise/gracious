@@ -1,193 +1,252 @@
-@use '../variables' as v;
-@import '../general.scss';
+@use "../variables" as v;
+@import "../general.scss";
 
-@media only screen 
-    and (min-width : 320px) 
-    and (max-width : 767px) {
-        
-    }
+@media only screen and (min-width: 320px) and (max-width: 767px) {
+}
 
+/* Tablet (portrait and landscape) ----------- */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+}
 
-    /* Tablet (portrait and landscape) ----------- */
-    @media only screen 
-    and (min-width : 768px) 
-    and (max-width : 1024px) {
-        
-    }
-
-    /* Desktops and laptops ----------- */
-    @media only screen 
-    and (min-width : 1024px) {
-        main {
-            width: 100%;
-            .wrapper {
-                max-width: 1980px;
-                margin: auto;
-                .container {
-                    .content {
-                            display: flex;
-                            flex: 1;
-                            flex-direction: column;
-                            align-items: center;
-                        .section {
-                            max-width: 767px;
-                           h2 {
-                            font-size: 1.5rem;
-                           }
-                            .header {
-                                display: flex;
-                                justify-content: space-between;
-                            }
-
-                            width: 100%;
-                    padding: 40px;
-                    .section-header {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                        margin-bottom: 20px;
-
-                        span {
-                            color: rgb(70, 70, 70);
-                        }
+/* Desktops and laptops ----------- */
+@media only screen and (min-width: 1024px) {
+    main {
+        width: 100%;
+        .wrapper {
+            max-width: 1980px;
+            margin: auto;
+            .container {
+                .content {
+                    display: flex;
+                    flex: 1;
+                    flex-direction: column;
+                    align-items: center;
+                    .section {
+                        max-width: 767px;
                         h2 {
-                            margin: 10px 0;
                             font-size: 1.5rem;
                         }
-                    button {
-                        padding: 10px;
-                        height: 100%;
-                        border: none;
-                        background-color: v.$primary;
-                        color: v.$white;
-                    }
-                    }
-
-                    .section-content {
-                        display: flex;
-                        .counter {
-                            flex: 1;
-
-                            .counter-circle {
-                                display: flex;
-                                justify-content: center;
-                            }
-                            .book-button {
-                                display: flex;
-                                justify-content: center;
-                                button {
-                                    margin: 10px 0;
-                                    padding: 10px;
-                                    color: v.$white;
-                                    border: none;
-                                    cursor: pointer;
-                                }
-
-                                #bookButton {
-                                    background-color: v.$primary;
-                                }
-
-                                #cancelButton {
-                                    background-color: red;
-                                }
-                            }
-                        }
-
-                        .appointment-information {
-                            flex: 1;
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: center;
-                            background-color: v.$white;
-                            padding: 40px;
-                            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-                            
-                            h2 {
-                                margin-bottom: 20px;
-                                font-size: 1.5rem;
-                            }
-                            
-                            div, span {
-                                margin: 5px 0;
-                                font-size: 1.2rem;
-                            }
-                        }
-                    }
-                    .table-wrapper {
-                        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-                        .table-navigation {
+                        .header {
                             display: flex;
                             justify-content: space-between;
-                            input, button {
-                                padding: 5px;
+                        }
+
+                        width: 100%;
+                        padding: 40px;
+                        .section-header {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                            margin-bottom: 20px;
+
+                            span {
+                                color: rgb(70, 70, 70);
                             }
-                            input {
-                                border: none;
-                                border-bottom: 1px solid v.$line;
-                                min-width: 300px;
-                                &:focus {
-                                    outline: none;
-                                    border-bottom: 1px solid v.$line;
-                                }
+                            h2 {
+                                margin: 10px 0;
+                                font-size: 1.5rem;
                             }
                             button {
-                                font-weight: bold;
                                 padding: 10px;
+                                height: 100%;
                                 border: none;
-                                cursor: pointer;
+                                background-color: v.$primary;
+                                color: v.$white;
                             }
-                            padding: 20px;
                         }
-                    }
-                    .table-wrapper .scrollable-table {
-                        height: 100%;
-                        overflow-y: auto;
-                        max-height: 600px;
-                        scrollbar-width: thin;
-                        scrollbar-color: v.$primary #f1f1f1;
-                        .table {
-                            width: 100%;
-                            height: 100%;
-                            border-collapse: collapse;
-                            color: v.$black;
-                            thead {
-                                tr{
-                                    th{
-                                        
+
+                        .section-content {
+                            display: flex;
+                            flex-direction: column;
+                            .counter {
+                                flex: 1;
+
+                                .progress-bar-container {
+                                    position: relative;
+                                    width: 100%;
+                                    height: 50px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: space-between;
+
+                                    .progress-line {
+                                        position: absolute;
+                                        top: 50%;
+                                        height: 4px;
+                                        background-color: lightgray;
+                                        z-index: 1;
+                                        transform: translateY(-50%);
+                                        width: 0%; /* Start with no width */
+                                        transition: width 1s ease-in-out; /* Smooth filling effect */
+                                    }
+
+                                    #line {
+                                        width: 100%;
+                                    }
+                                    #line1.active {
+                                        width: 33%;
+                                    }
+
+                                    #line2.active {
+                                        width: 66%;
+                                    }
+
+                                    #line3.active {
+                                        width: 100%;
+                                    }
+                                    .progress-line.active {
+                                        background-color: v.$primary; /* Your primary color */
+                                    }
+                                    .progress-node {
+                                        position: relative;
+                                        width: 20px;
+                                        height: 20px;
+                                        background-color: lightgray;
+                                        border-radius: 50%;
+                                        z-index: 2;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        transition: background-color 0.3s ease-in-out; /* Smooth color transition for activation */
+                                    }
+
+                                    .progress-node.active {
+                                        background-color: v.$primary; /* Replace 'v.$primary' with your primary color value */
+                                    }
+
+                                    .progress-node span {
+                                        position: absolute;
+                                        top: 30px;
+                                        font-size: 12px;
+                                        text-align: center;
+                                        white-space: nowrap;
+                                        color: #333; /* Default text color */
+                                        transition: color 0.3s ease-in-out; /* Optional transition for text appearance */
+                                    }
+
+                                    .progress-node.active span {
+                                        color: v.$primary; /* Change text color when the node is active */
+                                    }
+                                }
+
+                                .book-button {
+                                    margin: 20px 0;
+                                    display: flex;
+                                    justify-content: center;
+                                    button {
+                                        margin: 10px 0;
                                         padding: 10px;
-                                        background-color: v.$white;
-                                        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-                                        color: v.$black;
-                                        position: sticky;
-                                        top: 0;
+                                        color: v.$white;
+                                        border: none;
+                                        cursor: pointer;
+                                    }
+
+                                    #bookButton {
+                                        background-color: v.$primary;
+                                    }
+
+                                    #cancelButton {
+                                        background-color: red;
                                     }
                                 }
                             }
-                            tbody {
-                                tr {
-                                    
-                                    td {
-                                        text-align: center;
-                                        background-color: v.$white;
-                                        padding: 40px 0;
-                                        button {
-                                            background-color: transparent;
-                                            border: none;
-                                            cursor: pointer;
+
+                            .appointment-information {
+                                flex: 1;
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                                background-color: v.$white;
+                                padding: 40px;
+                                box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+                                h2 {
+                                    margin-bottom: 20px;
+                                    font-size: 1.5rem;
+                                }
+
+                                div,
+                                span {
+                                    margin: 5px 0;
+                                    font-size: 1.2rem;
+                                }
+                            }
+                        }
+                        .table-wrapper {
+                            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                            .table-navigation {
+                                display: flex;
+                                justify-content: space-between;
+                                input,
+                                button {
+                                    padding: 5px;
+                                }
+                                input {
+                                    border: none;
+                                    border-bottom: 1px solid v.$line;
+                                    min-width: 300px;
+                                    &:focus {
+                                        outline: none;
+                                        border-bottom: 1px solid v.$line;
+                                    }
+                                }
+                                button {
+                                    font-weight: bold;
+                                    padding: 10px;
+                                    border: none;
+                                    cursor: pointer;
+                                }
+                                padding: 20px;
+                            }
+                        }
+                        .table-wrapper .scrollable-table {
+                            height: 100%;
+                            overflow-y: auto;
+                            max-height: 600px;
+                            scrollbar-width: thin;
+                            scrollbar-color: v.$primary #f1f1f1;
+                            .table {
+                                width: 100%;
+                                height: 100%;
+                                border-collapse: collapse;
+                                table-layout: fixed;
+                                color: v.$black;
+                                thead {
+                                    tr {
+                                        th {
                                             padding: 10px;
-                                            margin: 0 10px;
-                                            svg {
-                                                width: 100%;
-                                            }
+                                            background-color: v.$white;
+                                            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                                            color: v.$black;
+                                            position: sticky;
+                                            top: 0;
+                                        }
+                                    }
+                                }
+                                tbody {
+                                    tr {
+                                        td {
+                                            text-align: center;
+                                            background-color: v.$white;
+                                            padding: 40px 0;
+                                            button {
+                                                background-color: v.$primary;
+                                                border: none;
+                                                color: v.$white;
+                                                cursor: pointer;
+                                                padding: 10px;
+                                                margin: 0 10px;
+                                                svg {
+                                                    width: 100%;
+                                                }
 
-                                            &:nth-child(1) svg {
-                                                fill: v.$primary;
-                                               
-                                            }
+                                                &:nth-child(1) svg {
+                                                    fill: v.$primary;
+                                                }
 
-                                            &:nth-child(2) svg {
-                                                fill: red;
-                                              
+                                                &:nth-child(2) svg {
+                                                    fill: red;
+                                                }
                                             }
                                         }
                                     }
@@ -195,12 +254,65 @@
                             }
                         }
                     }
-                        }
-                    }
                 }
-               }
+            }
         }
     }
+}
 
+.pagination-controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
 
-    
+.pagination-link {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    background-color: #f1f1f1;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        background-color 0.3s,
+        color 0.3s;
+}
+
+.pagination-link:hover {
+    background-color: v.$primary;
+    color: white;
+}
+
+.pagination-link.active {
+    background-color: v.$primary;
+    color: white;
+    border-color: v.$primary;
+}
+
+.pagination-link:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.table-sortable th {
+    cursor: pointer;
+}
+
+.table-sortable .th-sort-asc::after {
+    content: "\25b4";
+}
+
+.table-sortable .th-sort-desc::after {
+    content: "\25be";
+}
+
+.table-sortable .th-sort-asc::after,
+.table-sortable .th-sort-desc::after {
+    margin-left: 5px;
+}
+
+.table-sortable .th-sort-asc,
+.table-sortable .th-sort-desc {
+    background: rgba(0, 0, 0, 0.1);
+}

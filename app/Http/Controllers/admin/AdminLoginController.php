@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Employee;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class AdminLoginController extends Controller
 {
@@ -31,27 +31,24 @@ class AdminLoginController extends Controller
         $validator = Validator::make($request->all(), [
             'username' => 'required',
             'password' => 'required',
-        ], [
-            'username.required' => 'Username is required.',
-            'password.required' => 'Password is required.'
         ]);
 
-        $user = \App\Models\Employee::where('username', $request->username)->first();
-
         if ($validator->fails()) {
-            return redirect()->route('admin.login')->withErrors($validator)->withInput();
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        $user = Employee::where('username', $request->username)->first();
+
         if (!$user) {
-            return redirect()->route('admin.login')
-                ->withErrors(['username' => 'Invalid username. Please try again.'])
-                ->withInput();
+            return response()->json(['errors' => ['username' => ['Username do not exists.']]], 422);
+        }
+
+        if ($user->status !== 'Activated') {
+            return response()->json(['errors' => ['status' => ['Account deactivated.']]], 422);
         }
 
         if (!Auth::guard('admin')->attempt(['username' => $request->username, 'password' => $request->password])) {
-            return redirect()->route('admin.login')
-                ->withErrors(['password' => 'Invalid password. Please try again.'])
-                ->withInput();
+            return response()->json(['errors' => ['password' => ['Incorrect password.']]], 422);
         }
 
         $request->session()->regenerate();

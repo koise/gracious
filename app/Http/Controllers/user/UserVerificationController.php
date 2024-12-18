@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Otp;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Validator;
 
 class UserVerificationController extends Controller
 {
@@ -25,14 +23,20 @@ class UserVerificationController extends Controller
 
     public function sendOtp(Request $request)
     {
-        $request->validate([
-            'number' => 'required|numeric|exists:users,number'
+        $validator = Validator::make($request->all(), [
+            'number' => 'required|numeric|exists:users,number',
+        ], [
+            'number.exists' => 'Phone Number do not exists.',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $user = User::where('number', $request->number)->first();
 
-        if (!$user) {
-            return response()->json(['status' => 'error', 'message' => 'User not found'], 404);
+        if ($user->number_verified) {
+            return response()->json(['errors' => ['number' => ['Phone Number is already verified.']]], 422);
         }
 
         $otp = random_int(100000, 999999);
@@ -47,49 +51,51 @@ class UserVerificationController extends Controller
 
         // Send OTP via SMS and handle the response
         if ($this->sendOtpViaSms($request->number, $otp)) {
-            return response()->json(['status' => 'ok', 'message' => 'OTP sent successfully']);
+            return response()->json([], 200);
         } else {
-            return response()->json(['status' => 'error', 'message' => 'Failed to send OTP. Please try again later.'], 422);
+            return response()->json(['errors' => ['otp' => ['Failed to send OTP. Please try again later.']]], 422);
         }
     }
 
     private function sendOtpViaSms($number, $otp)
     {
         $apiKey = '8a187bf2a00ac9d4d87a1bfa37bed908';
-        $url = 'https://api.semaphore.co/api/v4/otp';
+        $url = 'https://api.semaphore.co/api/v4/messages';
 
         $client = new Client();
 
-        try {
-            $response = $client->post($url, [
-                'form_params' => [
-                    'apikey' => $apiKey,
-                    'number' => $number,
-                    'message' => "Your One Time Password is: $otp. Please use it within 5 minutes.",
-                ]
-            ]);
+        $response = $client->post($url, [
+            'form_params' => [
+                'apikey' => $apiKey,
+                'number' => $number,
+                'message' => "Your Verification Code is: $otp. Please use it within 5 minutes.",
+            ]
+        ]);
 
-            if ($response->getStatusCode() === 200) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (RequestException $e) {
+        if ($response->getStatusCode() === 200) {
+            return true;
+        } else {
             return false;
         }
     }
 
     public function process(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'number' => 'required|numeric|exists:users,number',
             'otp' => 'required|numeric',
+        ], [
+            'number.exists' => 'Phone Number do not exists.',
         ]);
 
-        $user = User::where('number', $request->input('number'))->first();
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        if (!$user) {
-            return response()->json(['status' => 'error', 'message' => 'Number not found'], 404);
+        $user = User::where('number', $request->number)->first();
+
+        if ($user->number_verified) {
+            return response()->json(['errors' => ['number' => ['Phone Number is already verified.']]], 422);
         }
 
         $otpEntry = Otp::where('user_id', $user->id)
@@ -98,10 +104,12 @@ class UserVerificationController extends Controller
             ->first();
 
         if ($otpEntry) {
-            $user->update(['number_verified' => 1]);
-            return response()->json(['status' => 'ok', 'message' => 'Account verified']);
+            $user->number_verified = 1;
+            $user->touch();
+            $user->save();
+            return response()->json([], 200);
         } else {
-            return response()->json(['status' => 'error', 'message' => 'Invalid or expired OTP'], 422);
+            return response()->json(['errors' => ['otp' => ['Otp is invalid or expired.']]], 422);
         }
     }
 }

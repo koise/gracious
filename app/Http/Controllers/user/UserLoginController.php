@@ -31,20 +31,21 @@ class UserLoginController extends Controller
         $user = User::where('username', $request->username)->first();
 
         if (!$user) {
-            return response()->json(['errors' => ['username' => ['User not found.']]], 422);
+            return response()->json(['errors' => ['username' => ['Username do not exists.']]], 422);
         }
 
         if ($user->number_verified != 1) {
-            return response()->json(['errors' => ['username' => ['Account not verified. Please verify your account.']]], 422);
+            return response()->json(['errors' => ['number_verified' => ['Account not verified. Please verify your account.']]], 422);
         }
 
         if ($user->status !== 'Activated') {
-            return response()->json(['errors' => ['username' => ['Account inactive.']]], 422);
+            return response()->json(['errors' => ['status' => ['Account deactivated.']]], 422);
         }
 
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
             Session::put('user_id', $user->id);
-            return response()->json(['status' => 'success']);
+            Session::put('username', $user->username);
+            return response()->json([], 200);
         } else {
             return response()->json(['errors' => ['password' => ['Incorrect password.']]], 422);
         }

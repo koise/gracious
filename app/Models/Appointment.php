@@ -15,12 +15,19 @@ class Appointment extends Model
         'preference',
         'appointment_time',
         'status',
-        'service',
+        'procedures',
         'remarks',
     ];
 
+    /**
+     * Define the relationship with the User model.
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'patient_id');
     }
+
+    /**
+     * Define the relationship with the Service model.
+     */
 }

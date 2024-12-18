@@ -10,9 +10,11 @@ use App\Http\Controllers\Admin\AdminAppointmentController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminPatientRecordController;
 use App\Http\Controllers\Admin\AdminAuthorizationController;
+use App\Http\Controllers\Admin\AdminSmsController;
 use App\Http\Controllers\User\UserVerificationController;
 use App\Http\Controllers\User\UserDashboardController;
-use App\Http\Controllers\User\UserForgotController;
+use App\Http\Controllers\User\UserRecordsController;
+use App\Http\Controllers\User\UserResetPasswordController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
 
@@ -29,15 +31,17 @@ Route::get('/index', function () {
 
 Route::prefix('account')->middleware('user.guest')->group(function () {
     Route::get('login', [UserLoginController::class, 'create'])->name('user.login');
-    Route::post('login/authenticate', [UserLoginController::class, 'authenticate'])->name('user.authenticate');
+    Route::post('authenticate', [UserLoginController::class, 'authenticate']);
     Route::get('cities/{provinceId}', [UserRegisterController::class, 'populateCities']);
     Route::get('register', [UserRegisterController::class, 'create'])->name('user.register');
     Route::post('register/process', [UserRegisterController::class, 'processRegister']);
     Route::get('verification/{number}', [UserVerificationController::class, 'verify'])->name('user.verify');
     Route::get('verification', [UserVerificationController::class, 'create'])->name('user.verification');
-    Route::get('forgot-password', [UserForgotController::class, 'create'])->name('user.forgot.password');
+    Route::get('forgot-password', [UserResetPasswordController::class, 'create'])->name('user.forgot.password');
     Route::post('verification/process', [UserVerificationController::class, 'process'])->name('user.verification.process');
     Route::post('verification/send-otp', [UserVerificationController::class, 'sendOtp'])->name('user.verification.sendOtp');
+    Route::post('reset/process', [UserResetPasswordController::class, 'process'])->name('user.reset.process');
+    Route::post('reset/send-otp', [UserResetPasswordController::class, 'sendOtp'])->name('user.reset.sendOtp');
 });
 
 Route::middleware('user.auth')->group(function () {
@@ -47,8 +51,10 @@ Route::middleware('user.auth')->group(function () {
     Route::post('book/appointment', [UserDashboardController::class, 'bookAppointment'])->name('book.appointment');
     Route::post('cancel/appointment', [UserDashboardController::class, 'cancelAppointment'])->name('cancel.appointment');
     Route::post('appointment/populate', [UserDashboardController::class, 'populateAppointments']);
-    Route::get('notification', [UserDashboardController::class, 'create'])->name('user.notification');
-    Route::get('records', [UserDashboardController::class, 'create'])->name('user.record');
+    Route::get('records', [UserRecordsController::class, 'create'])->name('user.record');
+    Route::post('authorization/populate', [UserRecordsController::class, 'populateAuthorizations']);
+    Route::post('record/populate', [UserRecordsController::class, 'populateRecords']);
+    Route::post('/record/modal/populate/{id}', [UserRecordsController::class, 'populateModalRecords']);
     Route::get('payment', [UserDashboardController::class, 'create'])->name('user.payment');
     Route::get('logout', [UserLoginController::class, 'logout'])->name('user.logout');
 });
@@ -61,7 +67,9 @@ Route::prefix('admin')->middleware('admin.guest')->group(function () {
 Route::prefix('admin')->middleware(['admin.auth', 'role:Admin'])->group(function () {
     //DASHBOARD
     Route::get('dashboard', [AdminDashboardController::class, 'view'])->name('admin.dashboard');
-    Route::get('chart-data', [AdminDashboardController::class, 'getChartData'])->name('admin.chart-data');
+    Route::get('/line-chart-data/{filter}', [AdminDashboardController::class, 'getLineChartData']);
+    Route::get('/doughnut-chart-data', [AdminDashboardController::class, 'getDoughnutChartData']);
+    Route::get('/doughnut-chart-data/{filter}', [AdminDashboardController::class, 'getDoughnutChartData']);
     Route::get('demographic-data', [AdminDashboardController::class, 'getDemographicData'])->name('admin.demographic-data');
 
     //EMPLOYEE
@@ -85,22 +93,35 @@ Route::prefix('admin')->middleware(['admin.auth', 'role:Admin'])->group(function
     Route::post('user/activate', [AdminUserController::class, 'activate']);
 
     //DOCTOR
-    Route::get('patient/record', [AdminPatientRecordController::class, 'view'])->name('admin.patient.record');
-    Route::get('patient/authorization', [AdminAuthorizationController::class, 'view'])->name('admin.authorization');
-    Route::post('patient/record/store', [AdminPatientRecordController::class, 'store']);
-    Route::post('patient/record/populate', [AdminPatientRecordController::class, 'populate']);
+    Route::get('record', [AdminPatientRecordController::class, 'view'])->name('admin.patient.record');
+    Route::post('record/store', [AdminPatientRecordController::class, 'store']);
+    Route::post('record/user/populate', [AdminPatientRecordController::class, 'populateUsers']);
+    Route::post('record/populate', [AdminPatientRecordController::class, 'populateRecords']);
+    Route::post('record/add', [AdminPatientRecordController::class, 'addRecord']);
+    Route::post('record/store', [AdminPatientRecordController::class, 'storeRecord']);
+    Route::post('record/delete', [AdminPatientRecordController::class, 'deleteRecord']);
+    Route::post('record/save', [AdminPatientRecordController::class, 'saveRecord']);
+
+    Route::get('authorization', [AdminAuthorizationController::class, 'view'])->name('admin.authorization');
+    Route::post('authorization/user/populate', [AdminAuthorizationController::class, 'populateUsers']);
+    Route::post('authorization/populate', [AdminAuthorizationController::class, 'populateAuthorizations']);
+    Route::post('authorization/store', [AdminAuthorizationController::class, 'store'])->name('authorization.store');
 
     //STAFF
-    Route::get('appointment', [AdminAppointmentController::class, 'viewPending'])->name('admin.appointment');
+    Route::get('appointments/pending', [AdminAppointmentController::class, 'viewPending'])->name('admin.appointments.pending');
+    Route::get('appointments/list', [AdminAppointmentController::class, 'viewAppointments'])->name('admin.appointments.list');
     Route::post('appointment/pending/populate', [AdminAppointmentController::class, 'populatePendingAppointment']);
+    Route::post('appointment/schedule/populate', [AdminAppointmentController::class, 'populateScheduledAppointment']);
+    Route::post('appointment/populate', [AdminAppointmentController::class, 'populateAppointmentList']);
     Route::get('appointment/fetch/{id}', [AdminAppointmentController::class, 'fetch']);
     Route::post('appointment/confirm', [AdminAppointmentController::class, 'confirm']);
     Route::post('appointment/reject', [AdminAppointmentController::class, 'reject']);
-    Route::post('appointment/populate', [AdminAppointmentController::class, 'populateAppointmentList']);
+    Route::post('appointment/update', [AdminAppointmentController::class, 'update']);
+    Route::post('appointment/schedule/generate-pdf', [AdminAppointmentController::class, 'generateSchedulePDF'])->name('generate.schedule.pdf');
 
-
-    Route::get('notification', [AdminNotificationController::class, 'index'])->name('admin.notification');
-    Route::get('transaction', [AdminNotificationController::class, 'index'])->name('admin.transaction');
+    Route::get('sms', [AdminSmsController::class, 'view']);
+    Route::post('sms/user/populate', [AdminSmsController::class, 'populateUsers']);
+    Route::post('sms/send', [AdminSmsController::class, 'confirm']);
 });
 
 Route::prefix('staff')->middleware(['admin.auth', 'role:Staff'])->group(function () {
@@ -109,7 +130,7 @@ Route::prefix('staff')->middleware(['admin.auth', 'role:Staff'])->group(function
     Route::get('appointment/fetch/{id}', [AdminAppointmentController::class, 'fetch']);
     Route::post('appointment/confirm', [AdminAppointmentController::class, 'confirm']);
     Route::post('appointment/reject', [AdminAppointmentController::class, 'reject']);
-
+    Route::post('/admin/appointment/update/{appointmentId}', [AdminAppointmentController::class, 'update']);
     Route::get('appointment/list', [AdminAppointmentController::class, 'viewList'])->name('staff.appointment.list');
     Route::post('appointment/populate', [AdminAppointmentController::class, 'populateAppointmentList']);
     Route::get('notification', [AdminNotificationController::class, 'index'])->name('staff.notification');

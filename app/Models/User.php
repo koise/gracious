@@ -18,14 +18,14 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name',
         'last_name',
-        'age',
+        'username',
         'number_verified',
+        'age',
         'number',
         'street_address',
-        'province',
-        'city',
-        'country',
-        'username',
+        'city_id',
+        'province_id',
+        'status',
         'password',
 
     ];
@@ -37,7 +37,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -56,5 +55,10 @@ class User extends Authenticatable
     public function appointments()
     {
         return $this->hasMany(Appointment::class, 'patient_id');
+    }
+
+    public function authorizations()
+    {
+        return $this->hasMany(Authorization::class, 'patient_id');
     }
 }

@@ -1,39 +1,51 @@
 import axios from 'axios';
 
-function renderPagination(currentPage, lastPage, $paginationWrapper, onPageClick) {
-    const startPage = Math.max(1, currentPage - 1);
-    const endPage = Math.min(lastPage, currentPage + 1);
+function renderPagination(currentPage, lastPage, paginationWrapper) {
+    const maxVisibleButtons = 3; 
+    let startPage, endPage;
 
-    $paginationWrapper.empty();
+    if (lastPage <= maxVisibleButtons) {
+        startPage = 1;
+        endPage = lastPage;
+    } else {
+        startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        endPage = startPage + maxVisibleButtons - 1;
 
-    $paginationWrapper.append(currentPage > 1
+        if (endPage > lastPage) {
+            endPage = lastPage;
+            startPage = endPage - maxVisibleButtons + 1;
+        }
+    }
+
+    paginationWrapper.empty();
+
+    paginationWrapper.append(currentPage > 1
         ? `<button class="pagination-link" data-page="${currentPage - 1}">Previous</button>`
         : `<button class="pagination-link disabled" disabled>Previous</button>`);
 
     for (let i = startPage; i <= endPage; i++) {
         const activeClass = i === currentPage ? 'active' : '';
-        $paginationWrapper.append(`
+        paginationWrapper.append(`
             <button class="pagination-link ${activeClass}" data-page="${i}">${i}</button>
         `);
     }
 
-    $paginationWrapper.append(currentPage < lastPage
+    paginationWrapper.append(currentPage < lastPage
         ? `<button class="pagination-link" data-page="${currentPage + 1}">Next</button>`
         : `<button class="pagination-link disabled" disabled>Next</button>`);
 }
 
-function renderTableRows(employees, $tableBody, buttonCallback) {
-    $tableBody.empty();
+
+const renderTableRows = (employees, tableBody, buttonCallback) => {
+    tableBody.empty();
     if (employees.length === 0) {
-        // If no employees are found, append a single row with a message
         const noEmployeesRow = `
             <tr>
                 <td colspan="8">No Employees Found</td>
             </tr>
         `;
-        $tableBody.append(noEmployeesRow);
+        tableBody.append(noEmployeesRow);
     } else {
-        // Render rows for each employee found
         employees.forEach(employee => {
             const createdAt = new Date(employee.created_at).toISOString().split('T')[0];
             const row = `
@@ -50,12 +62,12 @@ function renderTableRows(employees, $tableBody, buttonCallback) {
                     </td>
                 </tr>
             `;
-            $tableBody.append(row);
+            tableBody.append(row);
         });
     }
-}
+};
 
-function fetchActiveEmployees(page = 1, search = '') {
+const fetchActiveEmployees = (page = 1, search = '') => {
     axios.post(`/admin/employee/populate?page=${page}&search=${search}`)
         .then(response => {
             const employees = response.data.data;
@@ -72,10 +84,9 @@ function fetchActiveEmployees(page = 1, search = '') {
             });
         })
         .catch(error => console.error('Error fetching active employees!', error));
-}
+};
 
-
-function fetchDeactiveEmployees(page = 1, search = '') {
+const fetchDeactiveEmployees = (page = 1, search = '') => {
     axios.post(`/admin/employee/populateDeactivated?page=${page}&search=${search}`)
         .then(response => {
             const employees = response.data.data;
@@ -91,9 +102,9 @@ function fetchDeactiveEmployees(page = 1, search = '') {
             });
         })
         .catch(error => console.error('Error fetching deactivated employees!', error));
-}
+};
 
-function handleValidationError(error, $errorContainer) {
+const handleValidationError = (error, $errorContainer) => {
     if (error.response && error.response.status === 422) {
         const errors = error.response.data.errors;
         $errorContainer.empty().show();
@@ -105,7 +116,7 @@ function handleValidationError(error, $errorContainer) {
     } else {
         console.error('Error:', error);
     }
-}
+};
 
 $(document).ready(() => {
     fetchActiveEmployees();
@@ -123,7 +134,7 @@ $(document).ready(() => {
 
     $(document).on('click', '.pagination-link', function () {
         const page = $(this).data('page');
-        const search = $('#searchInput').val();
+        const search = $('.searchInput').val();
         if (!$(this).hasClass('disabled')) {
             const isActiveTable = $(this).closest('#activePagination').length > 0;
             if (isActiveTable) {

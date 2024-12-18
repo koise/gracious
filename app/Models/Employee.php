@@ -18,6 +18,7 @@ class Employee extends Authenticatable
         'username',
         'number',
         'role',
+        'status',
         'password',
     ];
 
