@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Authorization;
 use App\Models\MedicalRecord;
 use App\Models\Procedure;
+use Illuminate\Support\Facades\Log;
 
 class UserRecordsController extends Controller
 {
@@ -25,7 +26,7 @@ class UserRecordsController extends Controller
             return response()->json(['error' => 'User ID is required'], 400);
         }
 
-        $query = Authorization::where('patient_id', $userId)->with('user');
+        $query = Authorization::where('patient_id', $userId);
 
         // Apply search if provided
         if ($request->has('search')) {
@@ -57,7 +58,7 @@ class UserRecordsController extends Controller
             return response()->json(['error' => 'User ID is required'], 400);
         }
 
-        $query = MedicalRecord::where('patient_id', $userId)->with('user');
+        $query = Procedure::where('patient_id', $userId);
 
         // Apply search if provided
         if ($request->has('search')) {

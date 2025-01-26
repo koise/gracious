@@ -23,11 +23,6 @@ Route::get('/', function () {
     return view('just');
 })->name('/');
 
-Route::get('/index', function () {
-    return view('index');
-});
-
-
 
 Route::prefix('account')->middleware('user.guest')->group(function () {
     Route::get('login', [UserLoginController::class, 'create'])->name('user.login');
@@ -99,14 +94,15 @@ Route::prefix('admin')->middleware(['admin.auth', 'role:Admin'])->group(function
     Route::post('record/populate', [AdminPatientRecordController::class, 'populateRecords']);
     Route::post('record/add', [AdminPatientRecordController::class, 'addRecord']);
     Route::post('record/store', [AdminPatientRecordController::class, 'storeRecord']);
+    Route::get('record/appointments/{id}', [AdminAuthorizationController::class, 'getAppointmentDates']);
     Route::post('record/delete', [AdminPatientRecordController::class, 'deleteRecord']);
     Route::post('record/save', [AdminPatientRecordController::class, 'saveRecord']);
 
     Route::get('authorization', [AdminAuthorizationController::class, 'view'])->name('admin.authorization');
     Route::post('authorization/user/populate', [AdminAuthorizationController::class, 'populateUsers']);
-    Route::post('authorization/populate', [AdminAuthorizationController::class, 'populateAuthorizations']);
+    Route::post('authorization/populate', [AdminAuthorizationController::class, 'populateRecords']);
     Route::post('authorization/store', [AdminAuthorizationController::class, 'store'])->name('authorization.store');
-
+    Route::post('authorization/update', [AdminAuthorizationController::class, 'update'])->name('authorization.update');
     //STAFF
     Route::get('appointments/pending', [AdminAppointmentController::class, 'viewPending'])->name('admin.appointments.pending');
     Route::get('appointments/list', [AdminAppointmentController::class, 'viewAppointments'])->name('admin.appointments.list');
@@ -119,7 +115,7 @@ Route::prefix('admin')->middleware(['admin.auth', 'role:Admin'])->group(function
     Route::post('appointment/update', [AdminAppointmentController::class, 'update']);
     Route::post('appointment/schedule/generate-pdf', [AdminAppointmentController::class, 'generateSchedulePDF'])->name('generate.schedule.pdf');
 
-    Route::get('sms', [AdminSmsController::class, 'view']);
+    Route::get('sms', [AdminSmsController::class, 'view'])->name('admin.sms');
     Route::post('sms/user/populate', [AdminSmsController::class, 'populateUsers']);
     Route::post('sms/send', [AdminSmsController::class, 'confirm']);
 });

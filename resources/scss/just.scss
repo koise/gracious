@@ -8,7 +8,6 @@ main {
     scroll-snap-type: y mandatory;
     height: 100vh;
     overflow-y: scroll;
-    overflow-x: hidden;
     scroll-behavior: smooth;
     .area {
         scroll-snap-align: start;
@@ -18,9 +17,9 @@ main {
         margin: auto;
         width: 100%;
         max-width: 1980px;
+        min-width: 1280px;
         position: relative;
         padding: 0 200px;
-        min-width: 100vh;
         margin-bottom: 70px;
 
         nav {
@@ -354,24 +353,7 @@ img {
     transform: rotate(90deg);
   }
 
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .faq-question {
-      font-size: 14px;
-      padding: 15px;
-    }
-
-    .faq-answer {
-      font-size: 13px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .faq-container {
-      max-width: 90%;
-    }
-  }
-
+  
   .to-top {
     background-color: v.$black;
     color: v.$white;

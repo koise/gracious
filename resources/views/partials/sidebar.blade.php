@@ -83,15 +83,15 @@
                 <ul class="sub-menu">
 
                     <li><a href="{{ route('admin.patient.record') }}"
-                            class="{{ Route::is('admin.patient.record') ? 'active' : '' }}">Orthodontic Treatment</a>
+                            class="{{ Route::is('admin.patient.record') ? 'active' : '' }}">Treatment Plan</a>
                     </li>
                     <li><a href="{{ route('admin.authorization') }}"
-                            class="{{ Route::is('admin.authorization') ? 'active' : '' }}">Authorization</a></li>
+                            class="{{ Route::is('admin.authorization') ? 'active' : '' }}">Records</a></li>
 
                 </ul>
             </li>
             <li>
-                <a href=" {{ route('admin.dashboard') }}" class="">
+                <a href=" {{ route('admin.sms') }}" class="">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                         fill="#e8eaed">
                         <path

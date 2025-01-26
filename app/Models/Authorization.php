@@ -9,10 +9,12 @@ class Authorization extends Model
 {
     protected $fillable = [
         'patient_id',
+        'type',
+        'appointment_date',
         'file_path',
     ];
 
-    public function user()
+    public function patient()
     {
         return $this->belongsTo(User::class, 'patient_id');
     }

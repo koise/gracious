@@ -167,7 +167,6 @@ $(document).ready(() => {
                 $('#updateStreetAddress').val(data.street_address);
                 $('#updateProvince').val(data.province).trigger('change');
                 
-                // Populate cities and set the value
                 const citySelect = $('#updateCity');
                 const selectedCity = data.city;
     

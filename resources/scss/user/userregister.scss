@@ -22,7 +22,7 @@ body {
         max-width: 1980px;
         padding: 100px 0;
         .form {
-            min-width: 500px;
+            min-width: 100%;
             max-width: 500px;
             overflow: hidden;
             margin: auto;
@@ -97,6 +97,7 @@ body {
                                 padding: 0 10px;
                                 svg {
                                     fill: v.$primary;
+                                    cursor: pointer;
                                 }
                             }
                         }
@@ -108,6 +109,9 @@ body {
                         }
                     }
 
+                    .terms-condition {
+                        display: flex;
+                    }
                     input[type="checkbox"] {
                         -webkit-appearance: none;
                         appearance: none;
@@ -145,10 +149,11 @@ body {
 
                     button {
                         flex: 1;
-                        height: 40px;
+                        padding: 15px 0;
                         background-color: v.$primary;
                         color: v.$white;
                         cursor: pointer;
+                        border: none;
                     }
 
                     a {
@@ -164,180 +169,22 @@ body {
                     a {
                         margin-left: 5px;
                         text-decoration: none;
-                        color: v.$primary;
+                        color: v.$primary;  
                     }
                 }
             }
         }
     }
-    // .container {
-    //     height: 100vh;
-    //     display: flex;
-    //     justify-content: center;
-    //     align-items: center;
-    //     .form {
-    //         padding: 40px;
-    //         min-width: 500px;
-    //         display: flex;
-    //         flex-direction: column;
-    //         border-radius: 20px;
-    //         .form-heading {
-    //             margin-bottom: 40px;
-    //             .heading-text {
-    //                 display: flex;
-    //                 justify-content: center;
-    //                 h1 {
-    //                     font-size: 1.5rem;
-    //                     color: v.$primary;
-    //                 }
-    //             }
-    //         }
-    //         .form-body {
-    //                 .body-heading {
-    //                     display: flex;
-    //                     justify-content: center;
-    //                 }
-    //                 h2 {
-    //                     font-size: 1.2rem;
-    //                     font-weight: bold;
-    //                 }
-    //                 .form-group-col {
-    //                     display: flex;
-    //                     flex-direction: column;
-    //                     margin: 20px 0;
-    //                     .phone-number {
-    //                         display: flex;
-    //                         align-items: center;
-    //                         border: 1px solid v.$line;
-    //                         overflow: hidden;
-    //                         span {
-    //                             padding: 10px;
-    //                             border-right: 1px solid v.$line;
-    //                         }
-    //                         input {
-    //                             flex: 1;
-    //                             border: none;
-    //                         }
-
-    //                     }
-    //                     input {
-    //                         padding: 10px 15px;
-    //                         outline: none;
-    //                         border: solid 1px black;
-    //                         border-radius: 5px;
-    //                         &:focus {
-    //                             outline: none;
-    //                         }
-
-    //                     }
-    //                     .button {
-    //                         display: flex;
-    //                         justify-content: center;
-    //                         button {
-    //                             flex: 1;
-    //                             padding: 15px 0;
-    //                             background-color: v.$primary;
-    //                             color: v.$white;
-    //                             border: none;
-    //                         }
-    //                     }
-
-    //                     .forgot-password {
-    //                         text-align: end;
-    //                         a {
-
-    //                             color: v.$primary;
-    //                             text-decoration: none;
-    //                         }
-    //                 }
-    //             }
-
-    //                 .form-group-row {
-    //                     display: flex;
-    //                     flex-wrap: wrap;
-    //                     margin: 20px 0;
-
-    //                     &:last-of-type {
-    //                         justify-content: center;
-    //                     }
-
-    //                     input[type="checkbox"] {
-    //                         -webkit-appearance: none;
-    //                         appearance: none;
-    //                         background-color: v.$white;
-    //                         font: inherit;
-    //                         color: currentColor;
-    //                         width: 1.15em;
-    //                         height: 1.15em;
-    //                         border: 1px solid v.$black;
-    //                         border-radius: 0.15em;
-    //                         transform: translateY(-0.075em);
-    //                         margin: 0 10px;
-    //                         display: grid;
-    //                         place-content: center;
-    //                         cursor: pointer;
-    //                       }
-
-    //                       input[type="checkbox"]::before {
-    //                         content: "";
-    //                         width: 0.65em;
-    //                         height: 0.65em;
-    //                         clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-    //                         transform: scale(0);
-    //                         transform-origin: bottom left;
-    //                         transition: 120ms transform ease-in-out;
-    //                         box-shadow: inset 1em 1em v.$primary;
-    //                         /* Windows High Contrast Mode */
-    //                         background-color: v.$white;
-    //                       }
-
-    //                       input[type="checkbox"]:checked::before {
-    //                         transform: scale(1);
-    //                       }
-
-    //                     span {
-    //                         margin-right: 5px;
-    //                     }
-    //                     a {
-    //                         color: v.$primary;
-    //                         text-decoration: none;
-    //                     }
-
-    //                     select {
-    //                             padding: 10px 15px;
-    //                             min-width: 200px;
-    //                             margin: 10px 0;
-    //                     }
-
-    //                     .city {
-    //                         flex: 1;
-    //                         select {
-    //                             width: 100%;
-    //                         }
-    //                     }
-
-    //                     .province {
-    //                         flex: 1;
-    //                         select {
-    //                             width: 100%;
-    //                         }
-    //                     }
-
-    //                     .country {
-    //                         flex: 1;
-    //                         select {
-    //                             width: 100%;
-    //                         }
-    //                     }
-    //                 }
-    //         }
-    //     }
-    // }
 }
 
-@media only screen and (min-width: 320px) and (max-width: 1024px) {
-    .form-default {
-        min-width: 100%;
+@media only screen and (max-width: 1024px) {
+
+    footer {
+        display: none;
+    }
+
+    nav {
+        display: none;
     }
 }
 

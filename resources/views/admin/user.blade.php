@@ -49,7 +49,7 @@
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Username</th>
-                                            <th>Contact</th>
+                                            <th>Phone Number</th>
                                             <th>Status</th>
                                             <th>Date Created</th>
                                             <th>Action</th>
@@ -81,7 +81,7 @@
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Contact</th>
+                                            <th>Phone Number</th>
                                             <th>Status</th>
                                             <th>Date Created</th>
                                             <th>Action</th>
@@ -233,8 +233,8 @@
                             </select>
                         </div>
                         <div class="country">
-                            <select name="country" id="updateCountry" required>
-                                <option value="Philippines" default>Philippines</option>
+                            <select name="country" id="updateCountry">
+                                <option value="" default>Philippines</option>
                             </select>
                         </div>
                     </div>

@@ -20,28 +20,7 @@
             <div class="container">
                 @include('partials.topbar')
                 <div class="content">
-                    <div class="section">
-                        <div class="section-header">
-                            <h2>Orthodontic Treatment Plan</h2>
-                        </div>
-                        <div class="section-content">
-                            <div class="table-wrapper">
-                                <div class="scrollable-table">
-                                    <table class="table table-sortable">
-                                        <thead>
-                                            <tr>
-                                                <th>Date Created</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="recordTableBody">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div id="recordPagination" class="pagination-controls"></div>
-                        </div>
-                    </div>
+                    
                     <div class="section">
                         <div class="section-header">
                             <h2>Authorization Records</h2>
@@ -54,9 +33,10 @@
                             </div>
                             <div class="scrollable-table">
                                 <table class="table table-sortable">
-                                    <thead>
+                                <thead>
                                         <tr>
-
+                                            <th>Type of Form</th>
+                                            <th>Appointment Date</th>
                                             <th>Date Created</th>
                                             <th>Action</th>
                                         </tr>
@@ -70,6 +50,30 @@
 
                         </div>
                         <div id="authorizationPagination" class="pagination-controls"></div>
+                    </div>
+                    <div class="section">
+                        <div class="section-header">
+                            <h2>Orthodontic Treatment Plan</h2>
+                        </div>
+                        <div class="section-content">
+                            <div class="table-wrapper">
+                                <div class="scrollable-table">
+                                    <table class="table table-sortable">
+                                        <thead>
+                                            <tr>
+                                                    <th>Date</th>
+                                                    <th>Procedure</th>
+                                                    <th>Amount</th>
+                                                    <th>Paid</th>
+                                                    <th>Balance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recordTableBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

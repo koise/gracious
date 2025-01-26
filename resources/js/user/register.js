@@ -5,28 +5,29 @@ $(document).ready(function () {
     function clearErrors() {
         $('.text-danger').remove();
     }
-    const $termsCheckbox = $("#terms");
-        const $termsModal = $("#termsModal");
-    $("#terms, #termsLabel").click(function(e) {
-        if (!$termsCheckbox.prop("checked")) {
-            $termsModal.css("display", "flex");
-        } else {
-            $termsCheckbox.prop("checked", false);
-        }
-    });
-    $('.close-button').click(function() {
-        $termsModal.css("display", "none");
-        $termsCheckbox.prop("checked", false);
-    });
+    const termsCheckbox = $("#terms");
+    const termsModal = $("#termsModal");
 
-    $('#confirmButton').click(function() {
-        $termsModal.addClass("fade-out");
-        setTimeout(function() {
-            $termsModal.css("display", "none").removeClass("fade-out");
-            $termsCheckbox.prop("checked", true);
-            $termsCheckbox.prop("disabled", false);
-        }, 300);
-    });
+$("#terms, #termsLabel").click(function(e) {
+    if (termsCheckbox.prop("checked")) {
+        termsModal.css("display", "flex");
+        console.log("Checkbox is not checked, showing modal");
+    }
+});
+
+$('.close-button').click(function() {
+    termsModal.css("display", "none");
+    termsCheckbox.prop("checked", false);
+});
+
+$('#confirmButton').click(function() {
+    termsModal.addClass("fade-out");
+    setTimeout(function() {
+        termsModal.css("display", "none").removeClass("fade-out");
+        termsCheckbox.prop("checked", true);
+        console.log("Checkbox checked and modal closed");
+    }, 300);
+});
     $('.eye-toggle').click(function () {
         const toggle = $($(this).attr('toggle'));
         const svgVisible = $(this).find('svg:first-child');
@@ -70,11 +71,11 @@ $(document).ready(function () {
             .catch(function (error) {
                 if (error.response && error.response.data.errors) {
                     const errors = error.response.data.errors;
-                    let errorMessages = '<ul class="text-danger">';
+                    let errorMessages = '<div class="form-control"><ul class="text-danger">';
                     for (const key in errors) {
                         errorMessages += `<li>${errors[key][0]}</li>`;
                     }
-                    errorMessages += '</ul>';
+                    errorMessages += '</ul></div>';
                     $('#registerForm').prepend(errorMessages);
                 }
             });
@@ -101,7 +102,6 @@ $(document).ready(function () {
         var confirm_password = $('#confirm_password').val();
 
         $(this).val($(this).val().replace(/\s/g, ''));
-        // Validation for main password
         var lowercaseRegex = /[a-z]/;
         var uppercaseRegex = /[A-Z]/;
         var digitRegex = /\d/;
@@ -128,11 +128,9 @@ $(document).ready(function () {
             passwordMessage = 'Password must be at least 8 characters long.';
         }
 
-        // Update validation message for main password
         $('#password-validation-message').text(passwordMessage);
         $('#password-validation-message').css('color', passwordValid ? 'green' : 'red');
 
-        // Validation for confirm password
         var confirmValid = true;
         var confirmMessage = '';
 
@@ -146,7 +144,6 @@ $(document).ready(function () {
             confirmMessage = 'Please input your password first.';
         }
 
-        // Update validation message for confirm password
         if (confirm_password.length > 0) {
             $('#confirm-password-validation-message').text(confirmMessage);
             $('#confirm-password-validation-message').css('color', confirmValid ? 'green' : 'red');

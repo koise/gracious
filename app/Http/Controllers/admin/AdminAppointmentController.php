@@ -67,7 +67,7 @@ class AdminAppointmentController extends Controller
     {
         $date = $request->input('filterDate') ?: Carbon::tomorrow()->toDateString();
 
-        $appointments = Appointment::where('status', 'Accepted')
+        $appointments = Appointment::whereIn('status', ['Accepted', 'Missed', 'Ongoing', 'Completed'])
             ->whereDate('appointment_date', $date)
             ->with(['user'])
             ->get()
@@ -123,6 +123,7 @@ class AdminAppointmentController extends Controller
                 table {
                     width: 100%;
                     border-collapse: collapse;
+                    table-layout: fixed;
                     color: v.$black;
                 }
                 th, td {
@@ -137,7 +138,6 @@ class AdminAppointmentController extends Controller
         <body>' . $content . '</body>
     </html>';
 
-        // Use DomPDF to load the HTML and generate the PDF
         $pdf = PDF::loadHTML($content)
             ->setPaper('A4', 'portrait')
             ->setOption('margin-top', 20)  // Set top margin to 20 points
@@ -154,10 +154,8 @@ class AdminAppointmentController extends Controller
 
     public function populateAppointmentList(Request $request)
     {
-        // Start building the query with pagination
-        $query = Appointment::where('status', '!=', 'Pending')
+        $query = Appointment::whereNotIn('status', ['Pending', 'Accepted', 'Ongoing'])
             ->with('user')
-            ->orderByRaw("FIELD(status, 'Ongoing') DESC")
             ->orderBy('updated_at', 'desc');
 
         // If there is a search filter, apply it to the query
@@ -227,6 +225,7 @@ class AdminAppointmentController extends Controller
             'timeRange' => $timeRange,
         ]);
     }
+
     public function confirm(Request $request)
     {
 
@@ -293,20 +292,25 @@ class AdminAppointmentController extends Controller
         }
     }
 
-    private function sendRejectedSms($firstname, $number, $appointment)
+    private function sendRejectedSms($firstname, $number, $reason, $appointment)
     {
         $apiKey = '8a187bf2a00ac9d4d87a1bfa37bed908';
         $url = 'https://api.semaphore.co/api/v4/priority';
 
         $client = new Client();
 
+        // Conditionally append the reason to the message
+        $reasonMessage = $reason ? " The reason is {$reason}." : '';
+
+        $message = "Dear $firstname, your appointment has been rejected on $appointment.{$reasonMessage} Thank you! Best regards, Gracious Clinic.";
+
         try {
             $response = $client->post($url, [
                 'form_params' => [
                     'apikey' => $apiKey,
                     'number' => $number,
-                    'message' => "Dear $firstname, your appointment has been rejected on $appointment. Thank you! Best regards, Gracious Clinic",
-                ]
+                    'message' => $message,
+                ],
             ]);
 
             if ($response->getStatusCode() === 200) {
@@ -335,9 +339,12 @@ class AdminAppointmentController extends Controller
 
         $formattedDate = date('m-d-Y', strtotime($appointment->appointment_date));
 
+        $reason = $request->reason ? $request->reason : '';
+
         $sent = $this->sendRejectedSms(
             $user->first_name,
             $user->number,
+            $reason,
             $formattedDate,
         );
 
@@ -361,6 +368,12 @@ class AdminAppointmentController extends Controller
 
         $request->validate([
             'status' => 'required|string|in:Completed,Missed'
+        ]);
+
+        Log::info('Appointment status updated', [
+            'appointment_id' => $appointment->id,
+            'previous_status' => $appointment->status,
+            'new_status' => $request->status,
         ]);
 
         $appointment->status = $request->status;

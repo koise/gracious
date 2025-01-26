@@ -34,7 +34,7 @@ function updateProgressNodes(status) {
     if (status === 'Pending') {
         $('#node1').addClass('active');
         $('#node2, #node3, #node4').removeClass('active');
-        $('#line1, #line2, #line3').removeClass('active');// Line 1 will fill
+        $('#line1, #line2, #line3').removeClass('active');
     } else if (status === 'Accepted') {
         $('#node1, #node2').addClass('active');
         $('#line1').addClass('active');
@@ -54,7 +54,7 @@ function updateProgressNodes(status) {
         setTimeout(() => $('#line3').addClass('active'), 100);
     }
 }
-// Render Pagination
+
 function renderPagination(currentPage, lastPage, paginationWrapper, onPageClick) {
     const startPage = Math.max(1, currentPage - 1);
     const endPage = Math.min(lastPage, currentPage + 1);
@@ -77,7 +77,6 @@ function renderPagination(currentPage, lastPage, paginationWrapper, onPageClick)
         : `<button class="pagination-link disabled" disabled>Next</button>`);
 }
 
-// Render Appointment List Rows
 function renderAppointmentRows(appointments, tableBody) {
     tableBody.empty();
 
@@ -98,7 +97,6 @@ function renderAppointmentRows(appointments, tableBody) {
     });
 }
 
-// Fetch Appointment List with Pagination
 function fetchAppointmentList(page = 1, search = '') {
     axios.post(`appointment/populate?page=${page}&search=${search}`)
         .then(response => {
@@ -114,7 +112,6 @@ function fetchAppointmentList(page = 1, search = '') {
         .catch(error => console.error('Error fetching appointments:', error));
 }
 
-// Fetch Current Appointment
 function fetchCurrentAppointment() {
     axios.post('appointment/fetch')
         .then(response => {
@@ -128,15 +125,12 @@ function fetchCurrentAppointment() {
                 $('#timeText').text(formatted_time);
                 $('#serviceText').text(procedures);
 
-                // Use hoursDifference directly from backend
                 updateCancelButton(status, hours_difference);
             }
         })
         .catch(error => console.error('Error fetching appointments:', error));
 }
 
-
-// Initialize Event Listeners
 $(document).ready(() => {
     resetCurrentAppointmentUI();
     fetchCurrentAppointment();
@@ -164,34 +158,28 @@ $(document).ready(() => {
             `;
             $("#serviceList").append(listItem);
     
-            // Update hidden input
             updateProceduresInput();
         } else if (selectedService) {
             alert("This service has already been selected.");
         }
     
-        // Reset the dropdown
         $("#service").val("");
     });
-    // Remove button click event
     $("#serviceList").on("click", ".remove-btn", function () {
         const serviceToRemove = $(this).data("service");
-    
-        // Remove from the array
+
         selectedServices = selectedServices.filter(service => service !== serviceToRemove);
-    
-        // Remove the list item
+
         $(this).parent().remove();
-    
-        // Update hidden input
+
         updateProceduresInput();
     });
-    // Update hidden input value
+
     function updateProceduresInput() {
         $("#procedures").val(selectedServices.join(", "));
     }
 
-    // Pagination button click handler
+
     $(document).on('click', '.pagination-link', function () {
         const page = $(this).data('page');
         const search = $('#searchInput').val() || '';
@@ -207,12 +195,10 @@ $(document).ready(() => {
 
     $(document).on('click', '#bookButton', function() {
         $('#add-errors').empty().hide();
-
         axios.get('/user/fetch/id')
             .then(response => {
                 $('#user-appointment-id').val(response.data.id);
                 $('#addModal').fadeIn().css('display', 'flex');
-                fetchCurrentAppointment();
             })
             .catch(error => console.error('Error fetching user data:', error));
     });
@@ -224,8 +210,6 @@ $(document).ready(() => {
             .then(response => {
                 $('#cancel-appointment-id').val(response.data.id);
                 $('#cancelModal').fadeIn().css('display', 'flex');
-                fetchCurrentAppointment()
-
             })
             .catch(error => console.error('Error fetching user data:', error));
     });
@@ -258,6 +242,7 @@ $(document).ready(() => {
                 alert('Appointment cancelled successfully!');
                 fetchCurrentAppointment();
                 fetchAppointmentList();
+                resetCurrentAppointmentUI();
             })
             .catch(error => console.error('Error cancelling appointment:', error));
     });

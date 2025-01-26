@@ -107,6 +107,8 @@ class AdminEmployeeController extends Controller
             'number' => [
                 'required',
                 Rule::unique('employees')->ignore($employee->id),
+                'min:10',
+                'max:11',
             ],
 
             'first_name' => 'required',

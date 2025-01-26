@@ -20,7 +20,7 @@
                     <div class="section">
                         <div class="section-header">
                             <div class="appointment-header">
-                                <h2>Admin | <span>Record</span></h2>
+                                <h2>Admin | <span>Treatment Plan</span></h2>
                             </div>
                             <div class="profile">
 
@@ -62,20 +62,11 @@
                     </div>
                     <div class="section">
                         <div class="section-content-header">
-                            <h2>Record</h2>
+                            <h2>Treatment Plan</h2>
                         </div>
                         <div class="table-wrapper record-wrapper">
                             <form id="procedureForm" method="POST">
                                 <div class="medical-record" hidden>
-                                    <div class="medical-record-image">
-                                        <p>Upload Medical Record Image</p>
-                                        <label class="dropzone" for="input_file" id="drop-area" hidden>
-                                            <div id="img-view">
-                                                <img data-dz-thumbnail alt="Upload Image">
-                                                <p>Drag and drop or click here <br>to upload image</p>
-                                            </div>
-                                        </label>
-                                    </div>
                                     <div class="scrollable-table" id="procedure-container">
                                         <table class="table table-sortable" id="procedureTable">
                                             <thead>

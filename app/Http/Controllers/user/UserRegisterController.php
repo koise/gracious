@@ -12,17 +12,11 @@ use Illuminate\Support\Str;
 
 class UserRegisterController extends Controller
 {
-    /**
-     * Show the registration form.
-     */
     public function create()
     {
         return view('user.register');
     }
 
-    /**
-     * Process the registration request.
-     */
     public function processRegister(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -74,10 +68,6 @@ class UserRegisterController extends Controller
         ], 200);
     }
 
-
-    /**
-     * Fetch cities for a given province.
-     */
     public function populateCities($provinceId)
     {
         $cities = City::where('province_id', $provinceId)->get(['id', 'name']);

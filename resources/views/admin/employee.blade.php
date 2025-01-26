@@ -307,29 +307,39 @@
             }
         });
 
-        $(document).ready(function() {
-            $('#addNumber').on('input', function() {
-                // Remove non-numeric characters
-                $(this).val($(this).val().replace(/\D/g, ''));
+        /**
+             * Restrict input to numeric and limit digits
+             * @param {HTMLElement} inputElement The input element to restrict
+             * @param {number} maxDigits The maximum number of digits allowed
+             */
+            function restrictNumericInput(inputElement, maxDigits) {
+                inputElement.addEventListener("input", function() {
+                    this.value = this.value.replace(/\D/g, "").slice(0, maxDigits);
+                });
+            }
 
-                // Limit to 11 digits
-                var maxDigits = 11;
-                if ($(this).val().length > maxDigits) {
-                    $(this).val($(this).val().slice(0, maxDigits));
-                }
+            function restrictAlphaInput(inputElement) {
+                inputElement.addEventListener("input", function() {
+                    this.value = this.value.replace(/[^a-zA-Z]/g, '');
+                });
+            }
+
+            function restrictAlnumInput(inputElement) {
+                inputElement.addEventListener("input", function() {
+                    this.value = this.value.replace(/[^a-zA-Z0-9_@.]/g, '');
+                });
+            }
+
+            $(document).ready(function() {
+                restrictAlphaInput($("#addFirstname")[0]);
+                restrictAlphaInput($("#addLastname")[0]);
+                restrictAlnumInput($("#addUsername")[0]);
+                restrictNumericInput(document.getElementById("addNumber"), 11);
+                restrictAlphaInput($("#updateFirstname")[0]);
+                restrictAlphaInput($("#updateLastname")[0]);
+                restrictAlnumInput($("#updateUsername")[0]);
+                restrictNumericInput(document.getElementById("updateNumber"), 11);
             });
-
-            $('#updateNumber').on('input', function() {
-                // Remove non-numeric characters
-                $(this).val($(this).val().replace(/\D/g, ''));
-
-                // Limit to 11 digits
-                var maxDigits = 11;
-                if ($(this).val().length > maxDigits) {
-                    $(this).val($(this).val().slice(0, maxDigits));
-                }
-            });
-        });
     </script>
 </body>
 

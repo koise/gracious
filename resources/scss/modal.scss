@@ -106,7 +106,7 @@
                     }
 
                     input,
-                    select {
+                    select, textarea {
                         padding: 10px;
                         width: 100%;
                         border: 1px solid v.$line;
@@ -453,5 +453,13 @@
         color: v.$white;
         font-size: 2rem;
         cursor: pointer;
+    }
+}
+
+#imageModal {
+    padding: 5% 0;
+    #modalImage {
+        height: 100%;
+        object-fit: contain;
     }
 }

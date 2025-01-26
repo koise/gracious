@@ -1,59 +1,56 @@
 @use "../variables" as v;
 @import "../general.scss";
 
-@media only screen and (min-width: 320px) and (max-width: 767px) {
-    body {
-        .container {
-            height: 100vh;
+.text-danger {
+    text-align: start !important;
+    margin-top: 10px;
+    color: red;
+    font-size: 1rem;
+    border: 2px solid rgb(255, 147, 147);
+    background-color: rgb(255, 200, 200);
+    padding: 5px 0;
+    width: 100%;
+}
+
+body {
+    .container {
+        height: 100vh;
+        max-width: 1920px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .form-default {
+            padding: 40px;
+            min-width: 500px;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            .form-default {
-                padding: 40px;
-                min-width: 500px;
-                display: flex;
-                flex-direction: column;
-                .form-heading {
-                    margin-bottom: 40px;
-                    .heading-text {
-                        display: flex;
-                        justify-content: center;
-                        h1 {
-                            font-size: 36px;
-                            color: v.$primary;
-                        }
+            flex-direction: column;
+            border-radius: 20px;
+            .form-heading {
+                border-top: 4px solid v.$primary;
+                padding: 20px;
+                .heading-text {
+                    display: flex;
+                    justify-content: center;
+                    h1 {
+                        font-size: 1.5rem;
+                        color: v.$primary;
                     }
                 }
-                .form-body {
-                    .body-heading {
-                        display: flex;
-                        justify-content: center;
-                    }
+            }
+            .form-body {
+                .body-heading {
+                    display: flex;
+                    justify-content: center;
+                }
 
-                    .form-group-col {
-                        display: flex;
-                        flex-direction: column;
-                        margin: 20px 0;
+                .form-group-col {
+                    display: flex;
+                    flex-direction: column;
+                    margin: 20px 0;
 
-                        &:nth-child(4) {
-                            margin-bottom: 50px;
-                        }
-                        .password-toggle {
-                            display: flex;
-                            align-items: center;
-                            border: 1px solid v.$black;
-                            input {
-                                border: none;
-                                width: 100%;
-                            }
-                            span {
-                                padding: 0 10px;
-                                svg {
-                                    fill: v.$primary;
-                                    cursor: pointer;
-                                }
-                            }
-                        }
+                    &:nth-child(6) {
+                        padding-bottom: 20px;
+                        border-bottom: 2px solid v.$line;
                     }
 
                     label {
@@ -64,7 +61,6 @@
                         padding: 10px 15px;
                         outline: none;
                         border: solid 1px black;
-                        border-radius: 5px;
                         &:focus {
                             outline: none;
                         }
@@ -78,8 +74,8 @@
                             background-color: v.$primary;
                             color: v.$white;
                             border: none;
-                            font-size: 1.1rem;
                             cursor: pointer;
+                            
                         }
                     }
 
@@ -98,229 +94,36 @@
                             text-decoration: none;
                         }
                     }
-                }
-            }
-        }
-    }
-}
 
-/* Tablet (portrait and landscape) ----------- */
-@media only screen and (min-width: 768px) and (max-width: 1024px) {
-    .text-danger {
-        text-align: start !important;
-        margin-top: 10px;
-        color: red;
-        font-size: 1rem;
-        border: 2px solid rgb(255, 147, 147);
-        background-color: rgb(255, 200, 200);
-        padding: 10px;
-        width: 100%;
-    }
-
-    body {
-        .container {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            .form-default {
-                padding: 40px;
-                min-width: 500px;
-                display: flex;
-                flex-direction: column;
-                .form-heading {
-                    margin-bottom: 40px;
-                    .heading-text {
+                    .password-toggle {
                         display: flex;
-                        justify-content: center;
-                        h1 {
-                            font-size: 36px;
-                            color: v.$primary;
-                        }
-                    }
-                }
-                .form-body {
-                    .body-heading {
-                        display: flex;
-                        justify-content: center;
-                    }
-
-                    .form-group-col {
-                        display: flex;
-                        flex-direction: column;
-                        margin: 20px 0;
-
-                        &:nth-child(4) {
-                            margin-bottom: 50px;
-                        }
-                    }
-                    label {
-                        margin-bottom: 10px;
-                        font-size: 20px;
-                    }
-                    input {
-                        padding: 10px 15px;
-                        outline: none;
-                        border: solid 1px black;
-                        border-radius: 5px;
-                        &:focus {
-                            outline: none;
-                        }
-                    }
-                    .button {
-                        display: flex;
-                        justify-content: center;
-                        button {
-                            flex: 1;
-                            padding: 15px 0;
-                            background-color: v.$primary;
-                            color: v.$white;
-                            border: none;
-                            font-size: 1.1rem;
-                            cursor: pointer;
-                        }
-                    }
-
-                    span {
-                        text-align: center;
-                        a {
-                            color: v.$primary;
-                            text-decoration: none;
-                        }
-                    }
-
-                    .forgot-password {
-                        text-align: end;
-                        a {
-                            color: v.$primary;
-                            text-decoration: none;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-/* Desktops and laptops ----------- */
-@media only screen and (min-width: 1024px) {
-    .text-danger {
-        text-align: start !important;
-        margin-top: 10px;
-        color: red;
-        font-size: 1rem;
-        border: 2px solid rgb(255, 147, 147);
-        background-color: rgb(255, 200, 200);
-        padding: 10px;
-        width: 100%;
-    }
-    body {
-        .container {
-            height: 100vh;
-            max-width: 1920px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            .form-default {
-                padding: 40px;
-                min-width: 500px;
-                display: flex;
-                flex-direction: column;
-                box-shadow:
-                    rgba(0, 0, 0, 0.25) 0px 54px 55px,
-                    rgba(0, 0, 0, 0.12) 0px -12px 30px,
-                    rgba(0, 0, 0, 0.12) 0px 4px 6px,
-                    rgba(0, 0, 0, 0.17) 0px 12px 13px,
-                    rgba(0, 0, 0, 0.09) 0px -3px 5px;
-                border-radius: 20px;
-                .form-heading {
-                    margin-bottom: 20px;
-                    .heading-text {
-                        display: flex;
-                        justify-content: center;
-                        h1 {
-                            font-size: 36px;
-                            color: v.$primary;
-                        }
-                    }
-                }
-                .form-body {
-                    .body-heading {
-                        display: flex;
-                        justify-content: center;
-                    }
-
-                    .form-group-col {
-                        display: flex;
-                        flex-direction: column;
-                        margin: 20px 0;
-
-                        &:nth-child(6) {
-                            padding-bottom: 20px;
-                            border-bottom: 2px solid v.$line;
-                        }
-
-                        label {
-                            margin-bottom: 10px;
-                            font-size: 20px;
-                        }
+                        align-items: center;
+                        border: 1px solid v.$black;
                         input {
-                            padding: 10px 15px;
-                            outline: none;
-                            border: solid 1px black;
-                            &:focus {
-                                outline: none;
-                            }
+                            border: none;
+                            width: 100%;
                         }
-                        .button {
-                            display: flex;
-                            justify-content: center;
-                            button {
-                                flex: 1;
-                                padding: 15px 0;
-                                background-color: v.$primary;
-                                color: v.$white;
-                                border: none;
-                                font-size: 1.1rem;
+                        span {
+                            padding: 0 10px;
+                            svg {
+                                fill: v.$primary;
                                 cursor: pointer;
                             }
                         }
-
-                        span {
-                            text-align: center;
-                            a {
-                                color: v.$primary;
-                                text-decoration: none;
-                            }
-                        }
-
-                        .forgot-password {
-                            text-align: end;
-                            a {
-                                color: v.$primary;
-                                text-decoration: none;
-                            }
-                        }
-
-                        .password-toggle {
-                            display: flex;
-                            align-items: center;
-                            border: 1px solid v.$black;
-                            input {
-                                border: none;
-                                width: 100%;
-                            }
-                            span {
-                                padding: 0 10px;
-                                svg {
-                                    fill: v.$primary;
-                                    cursor: pointer;
-                                }
-                            }
-                        }
                     }
                 }
             }
         }
     }
+}
+
+@media only screen and (min-width: 320px) and (max-width: 1024px) {
+
+        footer {
+            display: none;
+        }
+
+        nav {
+            display: none;
+        }
 }

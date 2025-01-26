@@ -47,7 +47,7 @@ main {
 
                     .table-wrapper {
                         box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-
+                        background-color: v.$white;
                         .table-navigation {
                             display: flex;
                             justify-content: space-between;
@@ -71,6 +71,7 @@ main {
                             input {
                                 border: none;
                                 border-bottom: 1px solid v.$line;
+                                background-color: v.$white;
                                 &:focus {
                                     outline: none;
                                     border-bottom: 1px solid v.$line;
@@ -121,6 +122,7 @@ main {
                         max-height: 620px;
                         scrollbar-width: thin;
                         scrollbar-color: v.$primary #f1f1f1;
+                        background-color: v.$white;
                         .table {
                             width: 100%;
 
@@ -174,6 +176,12 @@ main {
                                             background-color: red;
                                             padding: 5px 10px;
                                         }
+
+                                        .send-btn {
+                                            svg {
+                                                fill: v.$primary;
+                                            }
+                                        }
                                         .view-btn,
                                         .edit-btn {
                                             background-color: v.$line;
@@ -226,10 +234,12 @@ main {
                             td {
                                 padding: 0;
                                 height: 40px;
+                                
                                 input {
                                     width: 100%;
                                     border: 1px solid v.$line;
                                     height: 100%;
+                                    text-align: center;
                                     &:focus {
                                         outline: none;
                                     }

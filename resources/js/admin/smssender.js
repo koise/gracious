@@ -69,7 +69,7 @@ function fetchUsers(page = 1, search = '') {
             const $paginationWrapper = $('#userPagination');
             
             renderUserTableRows(users, $tableBody, (id, name, number) => `
-                <td><button data-id="${id}" data-name="${name}"  data-number="${number}" class="add-btn">+</button></td>
+                <td><button data-id="${id}" data-name="${name}"  data-number="${number}" class="send-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg></button></td>
             `);
 
             renderPagination(response.data.current_page, response.data.last_page, $paginationWrapper, (page) => {
@@ -94,7 +94,7 @@ $(document).ready(() => {
         }
     });
 
-    $(document).on('click', '.add-btn', function () {
+    $(document).on('click', '.send-btn', function () {
 
         const userId = $(this).data('id');
         const name = $(this).data('name');

@@ -65,7 +65,7 @@ function renderUserTableRows(users, $tableBody) {
     }
 }
 
-function fetchRecord(procedures, medical_records, container) {
+function fetchRecord(procedures, container) {
     container.empty();
     if(procedures.length === 0) {
         const button = `<tr><td colspan="6"><label class="add-record">+</label></td></tr>`;
@@ -94,13 +94,6 @@ function fetchRecord(procedures, medical_records, container) {
 
         const button = `<tr><td colspan="6"><label class="add-record">+</label></td></tr>`;
         container.append(button);
-        if(medical_records.length > 0) {
-            medical_records.forEach(record => {
-                $('#img-view img[data-dz-thumbnail]').attr('src', '/' + record.file_path).addClass('show');
-            });   
-        } else {
-            $('#img-view img[data-dz-thumbnail]').attr('src', '/images/upload.png').removeClass('show');
-        }
     }
 }
 
@@ -129,7 +122,11 @@ $(document).ready(() => {
         const paid = parseFloat(row.find('.paid-input').val()) || 0;
         const balance = amount - paid;
     
-        row.find('.balance-input').val(balance.toFixed(2));
+        if(balance > 0) {
+            row.find('.balance-input').val(balance.toFixed(2));
+        } else{
+            row.find('.balance-input').val('');
+        }
     });
 
     $('#searchInput').on('input', function () {
@@ -167,8 +164,6 @@ $(document).ready(() => {
                 balance: balance
             });
         });
-        
-        dropzone.processQueue();
 
         axios.post('/admin/record/save', { procedures: data })
             .then(response => {
@@ -203,55 +198,17 @@ $(document).ready(() => {
         selectedID = userId;
         const isChecked = $(this).is(':checked');
         const saveBtn = $('.save-btn');
-        const dropArea = $('#drop-area');
         const container = $('#procedureTableBody');
         if (isChecked) {
             axios.post('/admin/record/populate', { user_id: userId })
                 .then(response => {
-                    const { procedures, medical_records } = response.data.data; 
-                    fetchRecord(procedures, medical_records, container);
+                    const { procedures} = response.data.data; 
+                    fetchRecord(procedures, container);
                     saveBtn.show();
-                    dropArea.show()
                 })
                 .catch(error => console.error('Error fetching records!', error));
         } else {
             $('#procedureTableBody').empty(); 
-            $('#drop-area').hide(); 
         }
     });
-
-    const dropzone = new Dropzone(".dropzone", {
-        url: "/admin/record/store",  
-        autoProcessQueue: false,
-        acceptedFiles: "image/*",
-        maxFiles: 1,
-        previewsContainer: "#img-view",
-        disablePreviews: true,
-        clickable: "#drop-area",
-        addRemoveLinks: true,
-        thumbnailWidth: 400,   // Set a higher resolution for the thumbnail
-        thumbnailHeight: 500, 
-        init: function () {
-            const defaultMessage = document.querySelector(".dz-default.dz-message");
-            const dzInstance = this;
-
-            this.on("thumbnail", (file, dataUrl) => {
-                $("#img-view img[data-dz-thumbnail]").attr("src", dataUrl).addClass('show');
-            });
-
-            this.on("sending", function (file, xhr, formData) {
-                formData.append('id', selectedID);
-                formData.append('_token', $('meta[name="csrf-token"]').attr('content')); 
-            });
-
-            this.on("success", (file, response) => {
-                console.log("File uploaded successfully!", response);
-            });
-
-            this.on("error", (file, errorMessage) => {
-                console.error("Upload failed!", errorMessage);
-            });
-        },
-    });
-
 });

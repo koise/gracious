@@ -2,7 +2,6 @@ import axios from 'axios';
 import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialize draggable and droppable functionalities
     const filterDateInput = document.getElementById('filterDate');
 
         const today = new Date();
@@ -13,31 +12,125 @@ document.addEventListener('DOMContentLoaded', function () {
         filterDateInput.min = tomorrow.toISOString().split('T')[0];
         filterDateInput.value = filterDateInput.min;
 
-        // Event listener for generating the PDF
     $(document).on('click', '#generate-btn', function() {
-        // Get the content of the table (or any other HTML you want to convert to PDF)
-        const tableContent = $('#scheduleTable').html();
-        // Send a POST request to the server to generate the PDF
-        axios.post('/admin/appointment/schedule/generate-pdf', {
-            content: tableContent
-        }, {
-            responseType: 'blob'  
-        })
-        .then(response => {
-            // Create a URL for the PDF Blob and trigger the download
-            const link = document.createElement('a');
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            link.href = url;
-            link.download = 'schedule.pdf';  // Set the default download file name
-            document.body.appendChild(link);
-            link.click();  // Simulate a click on the link to start the download
-            document.body.removeChild(link);  // Remove the link after download
-        })
-        .catch(error => {
-            // Handle any errors that occur during the request
-            console.error(error);
-            alert('There was an error generating the PDF');
-        });
+        let table = `<table>`;
+
+        const header = `
+            <thead>
+                <tr>
+                    <th colspan="10" id="date">Date: ${filterDateInput.value}</th>
+                </tr>
+                <tr>
+                    <th colspan="5">Morning</th>
+                    <th colspan="5">Afternoon</th>
+                </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Time</th>
+                    <th>Procedure</th>
+                    <th>Signature</th>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Time</th>
+                    <th>Procedure</th>
+                    <th>Signature</th>
+                </tr>
+            </thead>
+        `;
+        table += header;
+
+        let tableBody = `<tbody>`;
+        console.log($('#filterDate').val());
+        axios.post('/admin/appointment/schedule/populate', { filterDate: $('#filterDate').val()  })
+                .then(response => {
+                    const { appointments } = response.data; 
+                    console.log(appointments);
+                    let morningAppointments = appointments.Morning || [];
+                    let afternoonAppointments = appointments.Afternoon || [];
+                    
+                    while (morningAppointments.length < 30) {
+                        morningAppointments.push({});
+                    }
+                    while (afternoonAppointments.length < 30) {
+                        afternoonAppointments.push({});
+                    }
+            
+                    
+                    let morningCount = 1; 
+                    let afternoonCount = 1;
+            
+                    for (let i = 0; i < 30; i++) {
+                        let row = `<tr>`;
+            
+                        if (morningAppointments[i] && morningAppointments[i].name) {
+                            row += `
+                                <td>${morningCount}</td>
+                                <td>${morningAppointments[i].name}</td>
+                                <td>${morningAppointments[i].appointment_time}</td>
+                                <td>${morningAppointments[i].procedures}</td>
+                                <td></td>
+                            `;
+                            morningCount++;
+                        } else {
+                            row += `
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            `;
+                        }
+            
+                        if (afternoonAppointments[i] && afternoonAppointments[i].name) {
+                            row += `
+                                <td>${afternoonCount}</td> 
+                                
+                                <td>${afternoonAppointments[i].name}</td>
+                                <td>${afternoonAppointments[i].appointment_time}</td>
+                                <td>${afternoonAppointments[i].procedures}</td>
+                                <td></td>
+                            `;
+                            afternoonCount++;
+                        } else {
+                            row += `
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            `;
+                        }
+
+                        row += `</tr>`;
+                        tableBody += row;
+                    }
+                    tableBody += `</tbody>`;
+                    table += tableBody;
+                    
+                    axios.post('/admin/appointment/schedule/generate-pdf', {
+                        content: table
+                    }, {
+                        responseType: 'blob'  
+                    })
+                    .then(response => {
+                        const link = document.createElement('a');
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        link.href = url;
+                        link.download = 'schedule.pdf';  
+                        document.body.appendChild(link);
+                        link.click(); 
+                        document.body.removeChild(link); 
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert('There was an error generating the PDF');
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching appointments:', error);
+                });
+        
     });
 
 
@@ -55,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (appointments.length === 0) { 
                         const noAppointmentsRow = `
                             <tr>
-                                <td colspan="8">No Appointments Found</td>
+                                <td colspan="8" style="font-weight: bold;">No Appointments Found</td>
                             </tr>
                         `;
                         tableBody.innerHTML = noAppointmentsRow;
@@ -95,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             const [minTime, maxTime] = timeRange;
                             timeInput.min = minTime;
                             timeInput.max = maxTime;
-                            timeInput.value = minTime; // Default to start of range
+                            timeInput.value = minTime;
                         }
                     });
         
@@ -108,15 +201,12 @@ document.addEventListener('DOMContentLoaded', function () {
         function fetchScheduledAppointments(filterDate = filterDateInput.value) {
             axios.post('/admin/appointment/schedule/populate', { filterDate })
                 .then(response => {
-                    const { appointments } = response.data; // Assuming appointments are grouped by preference (Morning and Afternoon)
+                    const { appointments } = response.data; 
                     const tableBody = document.getElementById('scheduleAppointmentsTableBody');
-                    // Clear the current table content
                     tableBody.innerHTML = '';
-                    // Assuming appointments are now grouped by preference: Morning and Afternoon
                     let morningAppointments = appointments.Morning || [];
                     let afternoonAppointments = appointments.Afternoon || [];
             
-                    // Ensure that each array has 15 elements by padding with empty objects if needed
                     while (morningAppointments.length < 30) {
                         morningAppointments.push({});
                     }
@@ -124,23 +214,30 @@ document.addEventListener('DOMContentLoaded', function () {
                         afternoonAppointments.push({});
                     }
             
-                    // We iterate through both arrays, assuming each will now have exactly 15 elements
-                    let morningCount = 1; // Initialize counter for morning appointments
-                    let afternoonCount = 1; // Initialize counter for afternoon appointments
+                    
+                    let morningCount = 1; 
+                    let afternoonCount = 1;
             
                     for (let i = 0; i < 30; i++) {
                         let row = '<tr>';
             
-                        // Add morning preference (if it exists for the current index)
                         if (morningAppointments[i] && morningAppointments[i].name) {
                             row += `
                                 <td>${morningCount}</td>
                                 <td>${morningAppointments[i].name}</td>
                                 <td>${morningAppointments[i].appointment_time}</td>
                                 <td>${morningAppointments[i].procedures}</td>
-                                <td></td>
+                                <td>
+                                <select name="status" 
+                                        data-id="${morningAppointments[i].id}" 
+                                        data-prev-value="${morningAppointments[i].status}">
+                                    <option value="${morningAppointments[i].status}" selected disabled>${morningAppointments[i].status}</option>
+                                    <option value="Missed" ${morningAppointments[i].status === "Missed" ? "selected" : ""}>Missed</option>
+                                    <option value="Completed" ${morningAppointments[i].status === "Completed" ? "selected" : ""}>Completed</option>
+                                </select>
+                                </td>
                             `;
-                            morningCount++; // Increment counter for morning
+                            morningCount++;
                         } else {
                             row += `
                                 <td></td>
@@ -151,7 +248,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             `;
                         }
             
-                        // Add afternoon preference (if it exists for the current index)
                         if (afternoonAppointments[i] && afternoonAppointments[i].name) {
                             row += `
                                 <td>${afternoonCount}</td> 
@@ -159,9 +255,18 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <td>${afternoonAppointments[i].name}</td>
                                 <td>${afternoonAppointments[i].appointment_time}</td>
                                 <td>${afternoonAppointments[i].procedures}</td>
-                                <td></td>
+                                <td>
+                                <select name="status" 
+                                        data-id="${afternoonAppointments[i].id}" 
+                                        data-prev-value="${afternoonAppointments[i].status}">
+                                    <option value="Accepted" ${afternoonAppointments[i].status === "Accepted" ? "selected" : ""} disabled>Accepted</option>
+                                    <option value="Ongoing" ${afternoonAppointments[i].status === "Ongoing" ? "selected" : ""} disabled>Ongoing</option>
+                                    <option value="Missed" ${afternoonAppointments[i].status === "Missed" ? "selected" : ""}>Missed</option>
+                                    <option value="Completed" ${afternoonAppointments[i].status === "Completed" ? "selected" : ""}>Completed</option>
+                                </select>
+                                </td>
                             `;
-                            afternoonCount++; // Increment counter for afternoon
+                            afternoonCount++;
                         } else {
                             row += `
                                 <td></td>
@@ -173,8 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
             
                         row += '</tr>';
-            
-                        // Append the row to the table body
+
                         tableBody.innerHTML += row;
                     }
                 })
@@ -184,10 +288,30 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         
+        
     fetchPendingAppointments();
     fetchScheduledAppointments();
 
-// Fetch appointments when the date is changed
+    $(document).on('change', 'select[name="status"]', function () {
+        const $select = $(this);
+        const appointmentId = $select.data('id'); 
+        const status = $select.val(); 
+
+        axios.post('/admin/appointment/update', {
+            id: appointmentId,
+            status: status
+        })
+        .then(response => {
+            alert("Status updated successfully");
+        })
+        .catch(error => {
+            console.error("Error updating status:", error);
+            $select.val($select.data('prev-value'));
+        });
+
+        $select.data('prev-value', status);
+    });
+
 filterDateInput.addEventListener('change', () => {
     fetchPendingAppointments(filterDateInput.value);
     fetchScheduledAppointments(filterDateInput.value);
@@ -210,15 +334,15 @@ $(document).on('click', '#accept-btn', function () {
                 const max = convertTo12HourFormat(timeRange[1]);
                 $('#time').attr('min', timeRange[0]);
                 $('#time').attr('max', timeRange[1]);
-                $('#time').val(timeRange[0]); // Default to the start of the range
-                $('#time-validation-message').text(''); // Clear previous message
+                $('#time').val(timeRange[0]); 
+                $('#time-validation-message').text('');
                 $('#timeRange').text(`${min} to ${max}`);
             } else {
                 $('#time').removeAttr('min');
                 $('#time').removeAttr('max');
                 $('#time').val('');
                 $('#timeRange').text('');
-                $('#time-validation-message').text(''); // Clear message for no range
+                $('#time-validation-message').text(''); 
             }
 
             $('#acceptModal').fadeIn().css('display', 'flex');
@@ -246,7 +370,7 @@ $('#time').on('input', function () {
     const value = this.value;
     const validationMessage = $('#time-validation-message');
     if (!value) {
-        validationMessage.text(''); // Clear message if input is empty
+        validationMessage.text('');
         return;
     }
 
@@ -273,7 +397,7 @@ $('#acceptForm').submit(function (e) {
     axios.post('/admin/appointment/confirm', formData)
     .then(() => {
         fetchPendingAppointments();
-        fetchAppointmentList();
+        fetchScheduledAppointments();
         $('#acceptModal').fadeOut();
 
         alert('Appointment accepted!');
@@ -311,6 +435,7 @@ $('#rejectForm').submit(function (e) {
     axios.post('/admin/appointment/reject', formData)
     .then(() => {
         fetchPendingAppointments();
+        fetchScheduledAppointments();
         $('#rejectModal').fadeOut();
 
         // Display success alert

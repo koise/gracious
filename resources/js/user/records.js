@@ -52,14 +52,17 @@ function renderPagination(currentPage, lastPage, paginationWrapper, onPageClick)
 function renderAuthorizationRow(authorizations, tableBody, buttonCallback) {
     tableBody.empty();
     if (authorizations.length === 0) {
-        tableBody.append('<tr><td colspan="2">No Authorizations Found</td></tr>');
+        tableBody.append('<tr><td colspan="4">No Records Found</td></tr>');
         return;
     }
 
     authorizations.forEach((authorization) => {
         const row = `
             <tr>
+                <td>${authorization.type}</td>
+                <td>${authorization.appointment_date}</td>
                 <td>${authorization.created_at}</td>
+
                 ${buttonCallback(authorization.id, authorization.file_path)}
             </tr>`;
         tableBody.append(row);
@@ -70,14 +73,18 @@ function renderAuthorizationRow(authorizations, tableBody, buttonCallback) {
 function renderRecordRow(records, tableBody, buttonCallback) {
     tableBody.empty();
     if (records.length === 0) {
-        tableBody.append('<tr><td colspan="2">No Records Found</td></tr>');
+        tableBody.append('<tr><td colspan="5">No Treatment Plan Found</td></tr>');
         return;
     }
 
     records.forEach((record) => {
         const row = `
             <tr>
-                <td>${record.created_at}</td>
+                <td>${record.appointment_date}</td>
+                <td>${record.procedure}</td>
+                <td>${record.amount}</td>
+                <td>${record.paid}</td>
+                <td>${record.balance}</td>
                 ${buttonCallback(record.id, record.file_path)}
             </tr>`;
         tableBody.append(row);

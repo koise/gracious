@@ -57,29 +57,18 @@ class AdminPatientRecordController extends Controller
             return response()->json(['error' => 'User ID is required'], 400);
         }
 
-        $medicalRecords = MedicalRecord::where('patient_id', $userId)
-            ->get();
-
-        $medicalRecordsWithFilePath = $medicalRecords->map(function ($record) {
-            return [
-                'id' => $record->id,
-                'file_path' => $record->file_path,
-            ];
-        });
         $procedures = Procedure::where('patient_id', $userId)
-            ->with('user')
-            ->with('procedure')
-            ->get();
+        ->with('user')
+        ->get();
 
         $procedureWithPatientName = $procedures->map(function ($procedure) {
             $fullName = $procedure->user ? $procedure->user->first_name . " " . $procedure->user->last_name : null;
-            $service = $procedure->procedure ? $procedure->procedure->service : null;
             return [
                 'id' => $procedure->id,
                 'patient_id' => $procedure->patient_id,
                 'name' => $fullName,
                 'appointment_date' => $procedure->appointment_date ? $procedure->appointment_date->format('Y-m-d') : null,
-                'procedure' => $service,
+                'procedure' => $procedure->procedure,
                 'amount' => $procedure->amount,
                 'paid' => $procedure->paid,
                 'balance' => $procedure->balance,
@@ -89,7 +78,6 @@ class AdminPatientRecordController extends Controller
         return response()->json([
             'data' => [
                 'procedures' => $procedureWithPatientName,
-                'medical_records' => $medicalRecordsWithFilePath,
             ],
         ]);
     }
@@ -135,7 +123,6 @@ class AdminPatientRecordController extends Controller
         $procedures = $request->input('procedures');
 
         foreach ($procedures as $procedureData) {
-            // Log the procedure data before updating
             Log::info('Saving procedure data:', $procedureData);
 
             $procedure = Procedure::findOrFail($procedureData['id']);
@@ -150,40 +137,5 @@ class AdminPatientRecordController extends Controller
         }
 
         return response()->json([], 200);
-    }
-
-    public function storeRecord(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|exists:users,id',
-            'file' => 'required|image|max:2048',
-        ]);
-
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            $existingRecord = MedicalRecord::where('patient_id', $request->id)->first();
-
-            if ($existingRecord) {
-                if (file_exists(public_path($existingRecord->file_path))) {
-                    unlink(public_path($existingRecord->file_path));
-                }
-                $file->move(public_path('medical_records'), $filename);
-                $existingRecord->update([
-                    'file_path' => 'medical_records/' . $filename,
-                ]);
-            } else {
-                $file->move(public_path('medical_records'), $filename);
-                MedicalRecord::create([
-                    'patient_id' => $request->id,
-                    'file_path' => 'medical_records/' . $filename,
-                ]);
-            }
-
-            return response()->json([], 200);
-        }
-
-        return response()->json(['message' => 'No file uploaded!'], 400);
     }
 }

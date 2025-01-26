@@ -65,7 +65,7 @@ class AdminDashboardController extends Controller
                 $startDate = Carbon::now()->subDays(29)->toDateString(); // Last 30 days
                 break;
             case 'less_than_a_year':
-                $startDate = Carbon::now()->subYear()->startOfYear()->toDateString(); // Start of the current year
+                $startDate = Carbon::now()->subMonths(12)->toDateString(); // Last 12 months
                 break;
             default:
                 return response()->json(['error' => 'Invalid filter'], 400);
@@ -73,9 +73,11 @@ class AdminDashboardController extends Controller
 
         // Fetch data
         if ($filter === 'less_than_a_year') {
-            $userData = Appointment::whereBetween('appointment_date', [$startDate,  Carbon::now()->endOfMonth()])
-                ->selectRaw('MONTH(appointment_date) as month, COUNT(*) as count')
-                ->groupBy('month') // Group by both year and month
+            $userData = Appointment::whereBetween('appointment_date', [$startDate, $endDate])
+                ->selectRaw('MONTH(appointment_date) as month, YEAR(appointment_date) as year, COUNT(*) as count')
+                ->groupBy('year', 'month')
+                ->orderBy('year')
+                ->orderBy('month')
                 ->get();
         } else {
             $userData = Appointment::whereBetween('appointment_date', [$startDate, $endDate])
@@ -94,14 +96,16 @@ class AdminDashboardController extends Controller
                 $labels = $this->generateDateRangeLabels($startDate, $endDate, 'M d'); // Format: Dec 1
                 break;
             case 'less_than_a_year':
-                $labels = $this->generateDateRangeLabels($startDate, $endDate, 'M'); // Format: Jan, Feb, etc.
+                $labels = $this->generateDateRangeLabels($startDate, $endDate, 'M Y'); // Format: Jan 2024
                 break;
         }
 
         // Map counts to labels
         $counts = array_fill(0, count($labels), 0);
         foreach ($userData as $data) {
-            $date = Carbon::parse($data->date)->format($filter === 'less_than_a_year' ? 'M' : 'M d');
+            $date = $filter === 'less_than_a_year' 
+                ? Carbon::create($data->year, $data->month)->format('M Y') 
+                : Carbon::parse($data->date)->format('M d');
             $index = array_search($date, $labels);
             if ($index !== false) {
                 $counts[$index] = $data->count;

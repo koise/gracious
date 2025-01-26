@@ -21,7 +21,7 @@
                     <div class="section">
                         <div class="section-header">
                             <div class="appointment-header">
-                                <h2>Admin | <span>Authorization</span></h2>
+                                <h2>Admin | <span>Records</span></h2>
                             </div>
                             <div class="profile">
 
@@ -50,7 +50,7 @@
                                             <th>Patient Name</th>
                                             <th>Username</th>
                                             <th>Contact Number</th>
-                                            <th>Add Authorization</th>
+                                            <th>Add Record</th>
                                         </tr>
                                     </thead>
                                     <tbody id="userTableBody">
@@ -64,25 +64,42 @@
                     </div>
                     <div class="section">
                         <div class="section-content-header">
-                            <h2>Gallery on View</h2>
+                            <h2>Records</h2>
                         </div>
-                        <div class="table-wrapper authorization-wrapper">
+                        <div class="table-wrapper">
+                            <div class="table-navigation">
+                                <div class="search">
+                                    <input type="text" id="searchRecord" placeholder="Search">
+                                </div>
+                            </div>
+                            <div class="scrollable-table">
+                                <table class="table table-sortable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Patient ID</th>
+                                            <th>Type of Form</th>
+                                            <th>Appointment Date</th>
+                                            <th>Date Created</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recordTableBody">
 
-                            <div class="scrollable-table" id="authorization-container">
+                                    </tbody>
 
+                                </table>
                             </div>
                         </div>
-                        <div id="authorizationPagination" class="pagination-controls"></div>
+                        <div id="recordPagination" class="pagination-controls"></div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
-    <!-- Modal Structure -->
     <div id="imageModal">
         <span class="close">&times;</span>
         <img class="modal-content" id="modalImage">
-        <div id="caption"></div>
     </div>
 
     <div id="addModal">
@@ -93,7 +110,7 @@
                 </div>
             </div>
             <div class="form-content">
-                <h2>Add Authorization</h2>
+                <h2>Add Record</h2>
                 <form id="addForm" method="POST">
                     @csrf
                     <div class="form-control">
@@ -106,10 +123,19 @@
                         <p id="add-authorization-name"></p>
                     </div>
                     <div class="form-control">
-                        <p>Upload Authorization Image</p>
+                        <select name="type" id="type" required>
+                            <option value="" selected disabled>Select Type of Record</option>
+                            <option value="Medical Record">Medical Record Form</option>
+                            <option value="Authorization">Authorization Form</option>
+                        </select>
                     </div>
                     <div class="form-control">
-                        <label class="dropzone" for="input_file" id="drop-area">
+                        <select name="appointment_date" id="appointment_date" required>
+                            <option value="" selected disabled>Select Appointment</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label class="dropzone" id="drop-area">
                             <div id="img-view">
                                 <img data-dz-thumbnail src="{{ asset('images/upload.png') }}" alt="Upload Image">
                                 <p>Drag and drop or click here <br>to upload image</p>
@@ -132,7 +158,7 @@
                 </div>
             </div>
             <div class="form-content">
-                <h2>Edit Authorization</h2>
+                <h2>Edit Record</h2>
                 <form id="updateForm" method="POST">
                     @csrf
                     <div class="form-control">
@@ -145,10 +171,19 @@
                         <p id="update-authorization-name"></p>
                     </div>
                     <div class="form-control">
-                        <p>Upload Authorization Image</p>
+                        <select name="type" id="update-type" required>
+                            <option value="" selected disabled>Select Type of Record</option>
+                            <option value="Medical Record">Medical Record Form</option>
+                            <option value="Authorization">Authorization Form</option>
+                        </select>
                     </div>
                     <div class="form-control">
-                        <label class="dropzone" for="input_file" id="drop-area">
+                        <select name="appointment_date" id="update-appointment-date" required>
+                            <option value="" selected disabled>Select Appointment</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label class="dropzone" id="drop-area">
                             <div id="img-view">
                                 <img data-dz-thumbnail src="{{ asset('images/upload.png') }}" alt="Upload Image">
                                 <p>Drag and drop or click here <br>to upload image</p>

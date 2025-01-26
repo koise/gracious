@@ -58,9 +58,6 @@ const renderTableRows = (appointments, tableBody) => {
                 <td>${appointment.procedures}</td>
                 <td>${appointment.status}</td>
                 <td>${createdAt}</td>
-                <td>
-                    ${appointment.status === 'Ongoing' ? `<button class="edit-btn" data-id="${appointment.id}">Edit</button>` : ''}
-                </td>
             </tr>
         `;
             tableBody.append(row);
@@ -101,24 +98,4 @@ $(document).ready(() => {
             fetchAppointmentList(page, search);
         }
     });
-
-    $(document).on('click', '.edit-btn', function () {
-        $('#update-errors').empty().hide();
-        const appointmentid = $(this).data('id');
-
-        $('#updateId').val(appointmentid);
-        $('#updateModal').fadeIn().css('display', 'flex');
-    });
-
-    $('#updateForm').submit(function (e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        axios.post('/admin/appointment/update', formData)
-            .then(response => {
-                fetchAppointmentList();
-                $('#updateModal').fadeOut();
-            })
-            .catch(error => console.error('Error updating appointment data:', error));
-    });
-    $('#update-close-modal').click(() => $('#updateModal').fadeOut());
 });

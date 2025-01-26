@@ -91,12 +91,12 @@
                                             <th>Name</th>
                                             <th>Time</th>
                                             <th>Procedure</th>
-                                            <th>Signature</th>
+                                            <th>Status</th>
                                             <th>#</th>
                                             <th>Name</th>
                                             <th>Time</th>
                                             <th>Procedure</th>
-                                            <th>Signature</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody id="scheduleAppointmentsTableBody">
@@ -156,6 +156,12 @@
                     <input type="hidden" name="id" id="reject-appointment-id" value="" required>
                     <div class="form-control">
                         <p>Would you like to reject this appointment?</p>
+                    </div>
+                    <div class="form-control">
+                        <p>Reason for rejecting (Optional)</p>
+                    </div>
+                    <div class="form-control">
+                        <textarea name="reason" id="reason" cols="10" rows="4"></textarea>
                     </div>
                     <div class="form-control">
                         <button type="submit" class="submit-btn">Confirm</button>

@@ -51,7 +51,6 @@
                                             <th>Service</th>
                                             <th>Status</th>
                                             <th>Date Created</th>
-                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="appointmentsTableBody">
@@ -68,33 +67,6 @@
         </div>
 
     </main>
-
-    <div id="updateModal">
-        <div class="modal">
-            <div class="form-header">
-                <div id="update-close-modal">
-                    X
-                </div>
-            </div>
-            <div class="form-content">
-                <h2>Edit Status</h2>
-                <form id="updateForm" method="POST">
-                    @csrf
-                    <input type="hidden" name="id" id="updateId">
-                    <div class="form-control">
-                        <select name="status" id="updateStatus" required>
-                            <option value="" selected disabled>Select Status</option>
-                            <option value="Missed">Missed</option>
-                            <option value="Completed">Completed</option>
-                        </select>
-                    </div>
-                    <div class="form-control">
-                        <button type="submit" class="submit-btn">Confirm</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     <script>
         /**
          * Sorts a HTML table.
