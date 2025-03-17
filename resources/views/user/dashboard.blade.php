@@ -6,12 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Appointment</title>
-
-    @vite(['resources/scss/user/userappointment.scss', 'resources/scss/usersidebar.scss', 'resources/scss/modal.scss', 'resources/scss/footer.scss', 'resources/js/user/appointment.js'])
+    <title>Gracious Smile - Appointment</title>
     <style>
 
     </style>
+    @vite(['resources/scss/user/userappointment.scss', 
+    'resources/scss/usersidebar.scss',
+    'resources/scss/modal.scss', 
+    'resources/scss/footer.scss', 
+    'resources/js/user/appointment.js'])
 </head>
 
 <body>

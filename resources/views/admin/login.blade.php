@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Admin Login</title>
+    <title>Gracious Smile Admin - Admin Login</title>
 
     @vite(['resources/scss/admin/adminlogin.scss', 'resources/scss/footer.scss', 'resources/scss/modal.scss', 'resources/js/admin/login.js'])
 </head>

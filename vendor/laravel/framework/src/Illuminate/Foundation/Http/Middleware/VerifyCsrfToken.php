@@ -39,7 +39,9 @@ class VerifyCsrfToken
      *
      * @var array<int, string>
      */
-    protected $except = [];
+    protected $except = [
+        'qr/add',
+    ];
 
     /**
      * The globally ignored URIs that should be excluded from CSRF verification.
@@ -172,6 +174,8 @@ class VerifyCsrfToken
         return $this->addHttpCookie;
     }
 
+    
+
     /**
      * Add the CSRF token to the response cookies.
      *
@@ -247,4 +251,6 @@ class VerifyCsrfToken
     {
         static::$neverVerify = [];
     }
+
+    
 }

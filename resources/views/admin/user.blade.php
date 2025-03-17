@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Patient</title>
+    <title>Gracious Smile Admin -  Patient</title>
 
     @vite(['resources/scss/admin/admintable.scss', 'resources/scss/sidebar.scss', 'resources/scss/modal.scss', 'resources/scss/footer.scss', 'resources/js/sidebar.js', 'resources/js/admin/user.js'])
 

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login</title>
+    <title>Gracious Smile - Login</title>
 
     @vite(['resources/scss/header.scss', 'resources/scss/user/userregister.scss', 'resources/scss/footer.scss', 'resources/js/user/verification.js'])
 </head>
@@ -66,10 +66,7 @@
             }
         });
         $('#otp').on('input', function() {
-            // Remove non-numeric characters
             $(this).val($(this).val().replace(/\D/g, ''));
-
-            // Limit to 11 digits
             var maxDigits = 6;
             if ($(this).val().length > maxDigits) {
                 $(this).val($(this).val().slice(0, maxDigits));

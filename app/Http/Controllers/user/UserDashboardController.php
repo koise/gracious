@@ -8,6 +8,8 @@ use App\Models\Appointment;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
 use App\Models\Service;
+use App\Models\Payment;
+use App\Models\Qr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -155,6 +157,14 @@ class UserDashboardController extends Controller
                 'procedures' => $request->procedures,
                 'remarks' => $request->remarks,
             ]);
+            //DAGDAG SA SQL
+            Payment::create([
+                'appointment_id' => $appointment->id,
+                'status' => 'Pending',
+                'paid' => 0.00,
+                'total' => 0.00, 
+                'qr_id' => null, 
+            ]);
 
             return response()->json(['success' => true, 'message' => 'Appointment booked successfully.']);
         } catch (\Exception $e) {
@@ -166,6 +176,7 @@ class UserDashboardController extends Controller
     {
         $patientId = $request->id;
 
+        // Find the latest pending or accepted appointment
         $appointment = Appointment::where('patient_id', $patientId)
             ->whereIn('status', ['Pending', 'Accepted'])
             ->latest()
@@ -175,9 +186,137 @@ class UserDashboardController extends Controller
             return response()->json(['error' => 'No upcoming appointment found for the patient.'], 404);
         }
 
+        // Update appointment status to "Cancelled"
         $appointment->status = 'Cancelled';
         $appointment->save();
 
-        return response()->json(['success' => true], 200);
+        // Update payment status if exists
+        $payment = DB::table('payment')
+            ->where('appointment_id', $appointment->id)
+            ->first();
+
+        if ($payment) {
+            DB::table('payment')
+                ->where('appointment_id', $appointment->id)
+                ->update(['status' => 'Cancelled']);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Appointment and payment cancelled successfully.'], 200);
     }
+
+    //PAYMENT 
+    public function indexPayment()
+    {
+        return view('user.payment');
+    }
+
+    public function getLatestAppointmentDetails()
+{
+    $userId = 152; // Get logged-in user ID
+    $user = User::find($userId);
+
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
+    }
+
+    // Fetch the latest appointment for the user based on updated_at
+    $latestAppointment = Appointment::where('patient_id', $user->id)
+        ->whereIn('status', ['Pending', 'Accepted', 'Ongoing', 'Completed'])
+        ->orderByDesc('updated_at')
+        ->select('id', 'appointment_date', 'appointment_time', 'status', 'procedures')
+        ->first();
+
+    if (!$latestAppointment) {
+        return response()->json([
+            'message' => 'No appointments found',
+            'appointment' => null,
+            'payments' => []
+        ]);
+    }
+
+    // Fetch payment details related to the latest appointment
+    $paymentDetails = DB::table('payment')
+        ->join('appointments', 'payment.appointment_id', '=', 'appointments.id')
+        ->leftJoin('qr', 'payment.qr_id', '=', 'qr.id')
+        ->leftJoin('services', 'appointments.procedures', '=', 'services.service')
+        ->where('appointments.id', $latestAppointment->id)
+        ->select(
+            'payment.id as transaction_id',
+            'appointments.procedures as procedure_name',
+            DB::raw('COALESCE(services.service, "Unknown") as service_name'),
+            'payment.total as balance',
+            'payment.status',
+            'appointments.appointment_date as date',
+            'qr.id as qr_id',
+            'qr.gcash_name as payment_recipient'
+        )
+        ->orderByDesc('payment.created_at')
+        ->first(); // Using `first()` to match the expected single result
+
+    // If no payment record exists, return a default structure
+    if (!$paymentDetails) {
+        $paymentDetails = (object) [
+            'transaction_id' => null,
+            'procedure_name' => $latestAppointment->procedures,
+            'service_name' => 'Unknown',
+            'balance' => '0.00',
+            'status' => $latestAppointment->status,
+            'date' => $latestAppointment->appointment_date,
+            'qr_id' => null,
+            'payment_recipient' => null
+        ];
+    }
+
+    return response()->json($paymentDetails);
+}
+
+    
+
+
+    public function paymentHistory(Request $request)
+    {
+        $userId = Session::get('user_id');
+        $user = User::find($userId);
+    
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+    
+        // Get the latest appointment ID
+        $latestAppointment = DB::table('appointments')
+            ->where('patient_id', $user->id)
+            ->orderByDesc('updated_at')
+            ->value('id');
+    
+        // Get all payment history excluding the latest appointment
+        $appointments = DB::table('payment')
+            ->join('appointments', 'payment.appointment_id', '=', 'appointments.id')
+            ->leftJoin('qr', 'payment.qr_id', '=', 'qr.id')
+            ->leftJoin('services', 'appointments.procedures', '=', 'services.service') 
+            ->where('appointments.patient_id', $user->id)
+            ->when($latestAppointment, function ($query) use ($latestAppointment) {
+                return $query->where('appointments.id', '!=', $latestAppointment);
+            })
+            ->orderByDesc('payment.created_at')
+            ->select(
+                'payment.id as transaction_id',
+                'appointments.id as appointment_id',
+                'appointments.procedures as procedure_name', 
+                'services.service as service_name', 
+                'payment.total as balance',
+                'payment.status',
+                'appointments.appointment_date as date',
+                'qr.gcash_name as payment_recipient'
+            )
+            ->get();
+    
+        if ($appointments->isEmpty()) {
+            return response()->json(['message' => 'No payment history found'], 404);
+        }
+    
+        return response()->json($appointments);
+    }
+    
+
+
 }

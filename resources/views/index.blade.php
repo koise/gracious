@@ -10,7 +10,7 @@
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     @vite(['resources/scss/index.scss',])
     <title>Gracious Clinic</title>
-    
+    @laravelPWA
 </head>
     <!-- GO UP ICON -->
      <a href="" class = "goUpIcon"><img src="images/GoUpIcon.png" alt=""></a>

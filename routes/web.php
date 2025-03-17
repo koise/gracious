@@ -15,6 +15,7 @@ use App\Http\Controllers\User\UserVerificationController;
 use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\UserRecordsController;
 use App\Http\Controllers\User\UserResetPasswordController;
+use App\Http\Controllers\Admin\AdminQRController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
 
@@ -52,6 +53,10 @@ Route::middleware('user.auth')->group(function () {
     Route::post('/record/modal/populate/{id}', [UserRecordsController::class, 'populateModalRecords']);
     Route::get('payment', [UserDashboardController::class, 'create'])->name('user.payment');
     Route::get('logout', [UserLoginController::class, 'logout'])->name('user.logout');
+    //PAYMMENT
+    Route::get('payment', [UserDashboardController::class, 'indexPayment'])->name('user.payment');
+    Route::get('dashboard/payment', [UserDashboardController::class, 'getLatestAppointmentDetails']);
+    Route::get('payment/history', [UserDashboardController::class, 'paymentHistory'])->name('user.payment.history');
 });
 
 Route::prefix('admin')->middleware('admin.guest')->group(function () {
@@ -59,7 +64,15 @@ Route::prefix('admin')->middleware('admin.guest')->group(function () {
     Route::post('authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
 });
 
+Route::get('/qr/fetch', [AdminQRController::class, 'fetchQRData']);
 Route::prefix('admin')->middleware(['admin.auth', 'role:Admin'])->group(function () {
+    //PAYMENTS
+    Route::get('/payments', function () { return view('admin.payment');})->name('admin.payments');
+    Route::get('/qr', function () { return view('admin.qr'); })->name('admin.qr');
+    Route::get('/qr/fetch', [AdminQRController::class, 'fetchQRData'])->name('admin.qr.fetch');
+    Route::post('/qr/add', [AdminQRController::class, 'addQR']);
+    Route::get('/qrs/{id}', [AdminQRController::class, 'show']); 
+    Route::post('/qrs/{id}', [AdminQRController::class, 'update']); 
     //DASHBOARD
     Route::get('dashboard', [AdminDashboardController::class, 'view'])->name('admin.dashboard');
     Route::get('/line-chart-data/{filter}', [AdminDashboardController::class, 'getLineChartData']);

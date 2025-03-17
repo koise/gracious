@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Appointment</title>
-
+    <title>Gracious Smile - asdAppointments</title>
     @vite(['resources/scss/user/userappointment.scss', 'resources/scss/usersidebar.scss', 'resources/scss/usersidebar.scss', 'resources/scss/modal.scss', 'resources/scss/footer.scss', 'resources/js/user/records.js'])
     <style>
 
@@ -28,7 +27,7 @@
                         <div class="table-wrapper">
                             <div class="table-navigation">
                                 <div class="search">
-                                    <input type="text" id="searchInput" placeholder="Search appointments..." />
+                                    <input type="text" id="searchInput" placeholder="Search appointments....." />
                                 </div>
                             </div>
                             <div class="scrollable-table">
@@ -42,9 +41,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="authorizationTableBody">
-
                                     </tbody>
-
                                 </table>
                             </div>
 
@@ -125,8 +122,7 @@
     <div id="authorizationModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span id="closeAuthorizationModal" class="close">&times;</span>
-            <img id="authorizationImage" src="" alt="Authorization Image"
-                style="max-width: 100%; max-height: 100%;">
+            <img id="authorizationImage" src="" alt="Authorization Image">
         </div>
     </div>
 </body>

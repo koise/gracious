@@ -129,6 +129,7 @@ class ComposerStaticInit8c804e4a8c3c1ea0e6dd61980c279cdd
             'Laravel\\Sanctum\\' => 16,
             'Laravel\\Sail\\' => 13,
             'Laravel\\Prompts\\' => 16,
+            'LaravelPWA\\' => 11,
             'Ladumor\\LaravelPwa\\' => 19,
         ),
         'I' => 
@@ -432,6 +433,10 @@ class ComposerStaticInit8c804e4a8c3c1ea0e6dd61980c279cdd
         array (
             0 => __DIR__ . '/..' . '/laravel/prompts/src',
         ),
+        'LaravelPWA\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/silviolleite/laravelpwa',
+        ),
         'Ladumor\\LaravelPwa\\' => 
         array (
             0 => __DIR__ . '/..' . '/ladumor/laravel-pwa/src',
@@ -558,6 +563,7 @@ class ComposerStaticInit8c804e4a8c3c1ea0e6dd61980c279cdd
         'App\\Models\\Employee' => __DIR__ . '/../..' . '/app/Models/Employee.php',
         'App\\Models\\MedicalRecord' => __DIR__ . '/../..' . '/app/Models/MedicalRecord.php',
         'App\\Models\\Otp' => __DIR__ . '/../..' . '/app/Models/Otp.php',
+        'App\\Models\\Payment' => __DIR__ . '/../..' . '/app/Models/Payment.php',
         'App\\Models\\Procedure' => __DIR__ . '/../..' . '/app/Models/Procedure.php',
         'App\\Models\\Province' => __DIR__ . '/../..' . '/app/Models/Province.php',
         'App\\Models\\Service' => __DIR__ . '/../..' . '/app/Models/Service.php',
@@ -3014,6 +3020,11 @@ class ComposerStaticInit8c804e4a8c3c1ea0e6dd61980c279cdd
         'Ladumor\\LaravelPwa\\LaravelPwa' => __DIR__ . '/..' . '/ladumor/laravel-pwa/src/LaravelPwa.php',
         'Ladumor\\LaravelPwa\\PWAServiceProvider' => __DIR__ . '/..' . '/ladumor/laravel-pwa/src/PWAServiceProvider.php',
         'Ladumor\\LaravelPwa\\commands\\PublishPWA' => __DIR__ . '/..' . '/ladumor/laravel-pwa/src/commands/PublishPWA.php',
+        'LaravelPWA\\Http\\Controllers\\LaravelPWAController' => __DIR__ . '/..' . '/silviolleite/laravelpwa/Http/Controllers/LaravelPWAController.php',
+        'LaravelPWA\\Providers\\LaravelPWAServiceProvider' => __DIR__ . '/..' . '/silviolleite/laravelpwa/Providers/LaravelPWAServiceProvider.php',
+        'LaravelPWA\\Providers\\RouteServiceProvider' => __DIR__ . '/..' . '/silviolleite/laravelpwa/Providers/RouteServiceProvider.php',
+        'LaravelPWA\\Services\\ManifestService' => __DIR__ . '/..' . '/silviolleite/laravelpwa/Services/ManifestService.php',
+        'LaravelPWA\\Services\\MetaService' => __DIR__ . '/..' . '/silviolleite/laravelpwa/Services/MetaService.php',
         'Laravel\\Prompts\\Clear' => __DIR__ . '/..' . '/laravel/prompts/src/Clear.php',
         'Laravel\\Prompts\\Concerns\\Colors' => __DIR__ . '/..' . '/laravel/prompts/src/Concerns/Colors.php',
         'Laravel\\Prompts\\Concerns\\Cursor' => __DIR__ . '/..' . '/laravel/prompts/src/Concerns/Cursor.php',

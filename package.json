@@ -6,17 +6,21 @@
         "build": "vite build"
     },
     "devDependencies": {
-        "axios": "^1.7.7",
+        "axios": "^1.7.9",
         "laravel-vite-plugin": "^1.0",
         "sass": "^1.79.5",
         "vite": "^5.0"
     },
     "dependencies": {
-        "chart.js": "^4.4.4",
+        "axiom": "^0.1.6",
+        "chart.js": "^4.4.7",
         "dropzone": "^6.0.0-beta.2",
         "jquery": "^3.7.1",
         "jsdf": "^0.3.2",
         "select2": "^4.1.0-rc.0",
         "swapy": "^0.4.2"
+    },
+    "require": {
+        "silviolleite/laravlpwa": "~2.0.3"
     }
 }
