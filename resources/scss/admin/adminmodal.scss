@@ -5,21 +5,22 @@ $black: #202020;
 $hover: #222533;
 $line: #42434a;
 
-// Modal Styling
+// Modal Styling (Centering & Close Button)
 #addModal,
 #updateModal,
 #activateModal,
 #deactivateModal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+
 
     .modal {
         background: $white;
@@ -27,12 +28,19 @@ $line: #42434a;
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
 
         .form-header {
             display: flex;
             justify-content: flex-end;
+            position: relative; // To position the close button absolutely
 
-            #add-close-modal {
+            #update-close-modal {
+                position: absolute;
+                top: 10px;
+                right: 10px;
                 cursor: pointer;
                 font-size: 18px;
                 font-weight: bold;
@@ -93,42 +101,4 @@ $line: #42434a;
             }
         }
     }
-}
-
-// ✅ Button Styling (FIXED)
-.update-btn,
-.delete-btn {
-    padding: 8px 14px;
-    font-size: 14px;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-}
-
-// Update Button - Blue
-.update-btn {
-    background-color: #007bff;
-    color: white;
-
-    &:hover {
-        background-color: #0056b3;
-    }
-}
-
-// Delete Button - Red
-.delete-btn {
-    background-color: #dc3545;
-    color: white;
-    margin-left: 5px;
-
-    &:hover {
-        background-color: #b02a37;
-    }
-}
-
-// ✅ Center-align table actions
-td {
-    text-align: center;
 }

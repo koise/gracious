@@ -16,6 +16,11 @@ class UserLoginController extends Controller
         return view('user.login');
     }
 
+    public function profile()
+    {
+        return view('user.profile');
+    }
+    
     public function authenticate(Request $request)
     {
         // Validate the form inputs

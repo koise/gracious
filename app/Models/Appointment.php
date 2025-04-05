@@ -27,7 +27,8 @@ class Appointment extends Model
         return $this->belongsTo(User::class, 'patient_id');
     }
 
-    /**
-     * Define the relationship with the Service model.
-     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

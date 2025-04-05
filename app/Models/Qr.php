@@ -16,5 +16,6 @@ class Qr extends Model
         'image_path',
         'number',
         'gcash_name',
+        'status',
     ];
 }

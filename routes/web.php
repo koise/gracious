@@ -15,7 +15,8 @@ use App\Http\Controllers\User\UserVerificationController;
 use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\UserRecordsController;
 use App\Http\Controllers\User\UserResetPasswordController;
-use App\Http\Controllers\Admin\AdminQRController;
+use App\Http\Controllers\User\UserProfileController;
+use App\Http\Controllers\Admin\AdminQrController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
 
@@ -57,6 +58,11 @@ Route::middleware('user.auth')->group(function () {
     Route::get('payment', [UserDashboardController::class, 'indexPayment'])->name('user.payment');
     Route::get('dashboard/payment', [UserDashboardController::class, 'getLatestAppointmentDetails']);
     Route::get('payment/history', [UserDashboardController::class, 'paymentHistory'])->name('user.payment.history');
+    //PROFILE
+    Route::get('/profile', [UserLoginController::class, 'profile'])->name('user.profile');
+    Route::get('user/fetch', [UserProfileController::class, 'fetch']);
+    Route::post('/user/upload-id-image', [UserProfileController::class, 'uploadIdImage']);
+    Route::get('/fetch-image', [UserProfileController::class, 'fetchImage']);
 });
 
 Route::prefix('admin')->middleware('admin.guest')->group(function () {
@@ -64,15 +70,19 @@ Route::prefix('admin')->middleware('admin.guest')->group(function () {
     Route::post('authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
 });
 
-Route::get('/qr/fetch', [AdminQRController::class, 'fetchQRData']);
+Route::post('/qr/update', [AdminQRController::class, 'update'])->name('admin.qr.update');
+
 Route::prefix('admin')->middleware(['admin.auth', 'role:Admin'])->group(function () {
+    // QR Route
+    Route::get('/qr', [AdminQRController::class, 'index'])->name('admin.qr');
+    Route::post('/qr/store', [AdminQRController::class, 'store'])->name('admin.qr.store');
+    Route::get('/qr/populate', [AdminQRController::class, 'populateQRs']);
+    Route::get('/qr/{id}', [AdminQRController::class, 'getQRCodeDetails']);
+
+
     //PAYMENTS
-    Route::get('/payments', function () { return view('admin.payment');})->name('admin.payments');
-    Route::get('/qr', function () { return view('admin.qr'); })->name('admin.qr');
-    Route::get('/qr/fetch', [AdminQRController::class, 'fetchQRData'])->name('admin.qr.fetch');
-    Route::post('/qr/add', [AdminQRController::class, 'addQR']);
-    Route::get('/qrs/{id}', [AdminQRController::class, 'show']); 
-    Route::post('/qrs/{id}', [AdminQRController::class, 'update']); 
+    Route::get('/payments', function () { return view('admin.payment'); })->name('admin.payments');
+
     //DASHBOARD
     Route::get('dashboard', [AdminDashboardController::class, 'view'])->name('admin.dashboard');
     Route::get('/line-chart-data/{filter}', [AdminDashboardController::class, 'getLineChartData']);

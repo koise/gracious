@@ -187,7 +187,6 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const burger = document.querySelector(".burger-menu");
     const sidebar = document.querySelector(".leftside-navigation");
 
     burger.addEventListener("click", function () {

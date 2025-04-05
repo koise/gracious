@@ -111,55 +111,71 @@ class AdminAuthorizationController extends Controller
             ]);
 
             return response()->json([], 200);
-        }
+        }#
 
         return response()->json(['message' => 'No file uploaded!'], 400);
     }
 
     public function update(Request $request)
-{
-    $request->validate([
-        'id' => 'required|exists:users,id',
-        'type' => 'required',
-        'appointment_date' => 'required',
-    ]);
-
-    $authorization = Authorization::where('id', $request->id)->first();
-
-    if (!$authorization) {
-        return response()->json(['message' => 'Authorization record not found!'], 404);
-    }
-
-    if ($request->hasFile('file')) {
-        $file = $request->file('file');
-        $type = $request->type;
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $filePath = public_path($type);
-
-        // Delete the old file if it exists
-        if ($authorization->file_path && file_exists(public_path($authorization->file_path))) {
-            unlink(public_path($authorization->file_path));
+    {
+        try {
+            // Validate request
+            $request->validate([
+                'id' => 'required|exists:qrs,id',
+                'name' => 'required',
+                'gcash_name' => 'required',
+                'number' => 'required',
+                'image' => 'nullable|image|max:2048',
+            ]);
+    
+            // Find the QR Code record
+            $qrCode = Qr::where('id', $request->id)->first();
+    
+            if (!$qrCode) {
+                return response()->json(['message' => 'QR code record not found!'], 404);
+            }
+    
+            // Handle image upload if a new image is provided
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $filePath = public_path('qr_images');
+    
+                // Delete old image if it exists
+                if ($qrCode->image_path && file_exists(public_path($qrCode->image_path))) {
+                    unlink(public_path($qrCode->image_path));
+                }
+    
+                // Move the new image to the designated folder
+                $file->move($filePath, $filename);
+    
+                // Update the record with the new image path
+                $qrCode->update([
+                    'name' => $request->name,
+                    'gcash_name' => $request->gcash_name,
+                    'number' => $request->number,
+                    'image_path' => "qr_images/$filename",
+                ]);
+            } else {
+                // Update only text fields if no new image is uploaded
+                $qrCode->update([
+                    'name' => $request->name,
+                    'gcash_name' => $request->gcash_name,
+                    'number' => $request->number,
+                ]);
+            }
+    
+            \Log::info('QR Code updated successfully', ['id' => $qrCode->id]);
+    
+            return response()->json(['message' => 'QR Code updated successfully!'], 200);
+        } catch (\Exception $e) {
+            // Log any errors
+            \Log::error('Error updating QR Code:', [
+                'error_message' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
+            ]);
+            return response()->json(['message' => 'Something went wrong, please try again.'], 500);
         }
-
-        // Move the new file to the designated folder
-        $file->move($filePath, $filename);
-
-        // Update the record with the new file path
-        $authorization->update([
-            'type' => $type,
-            'appointment_date' => $request->appointment_date,
-            'file_path' => "$type/$filename",
-        ]);
-    } else {
-        // Update other fields if no file is uploaded
-        $authorization->update([
-            'type' => $request->type,
-            'appointment_date' => $request->appointment_date,
-        ]);
-    }
-
-    Log::info($authorization);
-
-    return response()->json(['message' => 'Authorization updated successfully!'], 200);
-}
+    }    
 }

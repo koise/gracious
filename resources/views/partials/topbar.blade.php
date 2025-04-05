@@ -26,7 +26,7 @@
         </svg>
         <div class="account">
             <ul>
-                <li><a href="">Profile</a></li>
+                <li><a href="{{ route('user.profile') }}">Profile</a></li>
                 <li><a href="">Change Password</a></li>
                 <li><a href="{{ route('user.logout') }}">Logout</a></li>
             </ul>
@@ -57,7 +57,7 @@
                 </a>
             </li>
         @auth
-                <li><a href="">Profile</a></li>
+                <li><a href="{{ route('user.profile') }}">Profile</a></li>
                 <li><a href="">Change Password</a></li>
                 <li><a href="{{ route('user.logout') }}">Logout</a></li>
             </ul>

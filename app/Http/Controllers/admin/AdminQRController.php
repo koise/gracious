@@ -1,125 +1,174 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\QR;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Qr;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class AdminQRController extends Controller
 {
-    public function fetchQRData()
-    {
-        // Enable query logging
-        DB::enableQueryLog();
-
-        // Fetch active and deactivated QR codes
-        $activeQRs = QR::where('status', 'active')->get();
-        $deactivatedQRs = QR::where('status', 'inactive')->get();
-
-        // Get executed queries and log them
-        $queries = DB::getQueryLog();
-        \Log::info('Executed Queries:', $queries);
-
-        return response()->json([
-            'activeQRs' => $activeQRs,
-            'deactivatedQRs' => $deactivatedQRs,
-        ]);
+    public function index(){
+        return view('admin.qr');
     }
 
-    public function addQR(Request $request)
+    public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'gcash_name' => 'required|string|max:255',
-            'number' => 'required|numeric|digits:11',
-            'images' => 'required|string', // Accepts Base64 string
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        try {
+            // Validate the request
+            $request->validate([
+                'name' => 'required',
+                'file' => 'required|image|max:2048',
+                'number' => 'required',
+                'gcash_name' => 'required'
+            ]);
+    
+            // Check if the request has a file
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $type = $request->type ?? 'qr_images'; // Default folder set to 'qr_images'
+                $filename = time() . '_' . $file->getClientOriginalName();
+    
+                // Directly store the file in the public directory
+                $filePath = public_path("$type/$filename");
+    
+                // Ensure the directory exists
+                if (!file_exists(public_path($type))) {
+                    mkdir(public_path($type), 0777, true);  // Create directory if it doesn't exist
+                }
+    
+                // Move the file to the public directory
+                $file->move(public_path($type), $filename);
+    
+                // Store QR details in the database
+                $QR = Qr::create([
+                    'name' => $request->name,
+                    'image_path' => "$type/$filename",  // Store relative path
+                    'number' => $request->number,
+                    'gcash_name' => $request->gcash_name,
+                    'status' => 'inactive'
+                ]);
+    
+                return response()->json(['message' => 'QR Code saved successfully!', 'file_path' => "$type/$filename"], 200);
+            }
+    
+            return response()->json(['message' => 'No file uploaded!'], 400);
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Error occurred while storing QR Code:', [
+                'error_message' => $e->getMessage(),
+                'request_data' => $request->all()
+            ]);
+    
+            return response()->json(['message' => 'Something went wrong. Please try again.'], 500);
         }
-
-        // ✅ Decode base64 image and store it
-        $imageData = $request->input('images');
-
-        if ($imageData) {
-            // Remove the "data:image/png;base64," part
-            $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $imageData);
-            $imageData = base64_decode($imageData);
-
-            // Generate a unique filename
-            $imageName = 'qr_' . time() . '.png';
-            $imagePath = 'qr_images/' . $imageName;
-
-            // Store in the public storage
-            Storage::disk('public')->put($imagePath, $imageData);
-        } else {
-            $imagePath = null; // Allow null if no image is provided
+    }    
+    public function populateQRs(Request $request)
+    {
+        try {
+            $query = Qr::query();
+    
+            if ($request->has('search')) {
+                $search = $request->get('search');
+                $query->where('name', 'like', "%{$search}%");
+            }
+    
+            $qrData = $query->paginate(10);
+            return response()->json($qrData);
+    
+        } catch (\Exception $e) {
+            Log::error('Error fetching QR data:', [
+                'error_message' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
+            ]);
+            return response()->json(['message' => 'Error fetching data. Please try again later.'], 500);
         }
+    }    
 
-        // ✅ Insert into database (ensure column name is `image_path`)
-        $qr = QR::create([
-            'name' => $request->input('name'),
-            'gcash_name' => $request->input('gcash_name'),
-            'number' => $request->input('number'),
-            'image_path' => $imagePath, 
-            'status' => 'inactive',
-        ]);
-
-        return response()->json(['message' => 'QR Code added successfully!', 'qr' => $qr], 200);
+    public function getQRCodeDetails($id)
+    {
+        $qrCode = Qr::find($id); // Make sure you are using the correct model name
+        if ($qrCode) {
+            return response()->json([
+                'success' => true,
+                'qrCode' => $qrCode
+            ]);
+        }
+        return response()->json(['success' => false, 'message' => 'QR code not found'], 404);
     }
-
-     // Fetch QR by ID
-     public function showQr($id)
-     {
-         $qr = QR::find($id);
-         if (!$qr) {
-             return response()->json(['message' => 'QR code not found.'], 404);
-         }
-         return response()->json(['qr' => $qr]);
-     }
- 
-     // Update QR Data
-     public function updateQr(Request $request, $id)
-     {
-         $qr = QR::find($id);
-         if (!$qr) {
-             return response()->json(['message' => 'QR code not found.'], 404);
-         }
- 
-         $request->validate([
-             'qr_name' => 'required|string|max:255',
-             'gcash_name' => 'required|string|max:255',
-             'gcash_number' => 'required|string|max:20',
-             'amount' => 'required|numeric|min:0',
-             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-         ]);
- 
-         // Update text fields
-         $qr->name = $request->qr_name;
-         $qr->gcash_name = $request->gcash_name;
-         $qr->number = $request->gcash_number;
-         $qr->amount = $request->amount;
- 
-         // Handle image upload
-         if ($request->hasFile('image')) {
-             if ($qr->image_path) {
-                 Storage::delete($qr->image_path); // Delete old image
-             }
-             $path = $request->file('image')->store('qr_images', 'public');
-             $qr->image_path = 'storage/' . $path;
-         }
- 
-         $qr->save();
- 
-         return response()->json(['message' => 'QR Code updated successfully!', 'qr' => $qr]);
-     }
     
-
     
+    public function update(Request $request, $id)
+    {
+        try {
+            \Log::info('Update QR Request:', [
+                'id' => $id,
+                'data' => $request->all(),
+                'has_file' => $request->hasFile('image')
+            ]);
+    
+            // Validate request
+            $request->validate([
+                'name' => 'required',
+                'gcash_name' => 'required',
+                'number' => 'required',
+                'image' => 'nullable|image|max:2048'
+            ]);
+    
+            // Find the QR Code
+            $qrCode = Qr::find($id);
+            
+            // Log if QR code is not found
+            if (!$qrCode) {
+                \Log::warning('QR code not found', ['id' => $id]);
+                return response()->json(['message' => 'QR code not found'], 404);
+            } else {
+                \Log::info('QR code found', ['id' => $id, 'qrCode' => $qrCode]);
+            }
+    
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $folderPath = public_path('qr_images');
+    
+                // Ensure directory exists
+                if (!file_exists($folderPath)) {
+                    \Log::info('Creating directory for images');
+                    mkdir($folderPath, 0777, true);
+                }
+    
+                // Delete the old image if it exists
+                if ($qrCode->image_path && file_exists(public_path($qrCode->image_path))) {
+                    \Log::info('Deleting old image', ['path' => $qrCode->image_path]);
+                    unlink(public_path($qrCode->image_path));
+                }
+    
+                // Move the new file to the directory
+                $file->move($folderPath, $filename);
+                $qrCode->image_path = "qr_images/$filename";
+            }
+    
+            // Update other fields
+            $qrCode->name = $request->name;
+            $qrCode->gcash_name = $request->gcash_name;
+            $qrCode->number = $request->number;
+            $qrCode->save();
+    
+            \Log::info('QR Code updated successfully', ['id' => $qrCode->id]);
+            return response()->json(['message' => 'QR Code updated successfully', 'qrCode' => $qrCode], 200);
+    
+        } catch (\Exception $e) {
+            \Log::error('Error updating QR code:', [
+                'error_message' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
+            ]);
+            return response()->json(['message' => 'Something went wrong, please try again.'], 500);
+        }
+    }    
 }

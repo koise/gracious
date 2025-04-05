@@ -23,6 +23,7 @@ return array(
     'App\\Models\\Payment' => $baseDir . '/app/Models/Payment.php',
     'App\\Models\\Procedure' => $baseDir . '/app/Models/Procedure.php',
     'App\\Models\\Province' => $baseDir . '/app/Models/Province.php',
+    'App\\Models\\Qr' => $baseDir . '/app/Models/Qr.php',
     'App\\Models\\Service' => $baseDir . '/app/Models/Service.php',
     'App\\Models\\Sms' => $baseDir . '/app/Models/Sms.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',

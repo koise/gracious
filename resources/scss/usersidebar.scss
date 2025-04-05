@@ -125,13 +125,7 @@
 
 /* Responsive Styling */
 @media only screen and (max-width: 1024px) {
-    img {
-        display: block;
-        position:absolute;
-        object-fit: cover;
-        width: 70px;
-        margin: 0 20px;
-    }
+
     .topbar {
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         background-color: white;

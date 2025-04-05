@@ -21,20 +21,17 @@ function renderPagination(currentPage, lastPage, paginationWrapper, onPageClick)
 
     paginationWrapper.empty();
 
-    // Previous Button
     paginationWrapper.append(
         currentPage > 1
             ? `<button class="pagination-link" data-page="${currentPage - 1}">Previous</button>`
             : `<button class="pagination-link disabled" disabled>Previous</button>`
     );
 
-    // Page Buttons
     for (let i = startPage; i <= endPage; i++) {
         const activeClass = i === currentPage ? 'active' : '';
         paginationWrapper.append(`<button class="pagination-link ${activeClass}" data-page="${i}">${i}</button>`);
     }
 
-    // Next Button
     paginationWrapper.append(
         currentPage < lastPage
             ? `<button class="pagination-link" data-page="${currentPage + 1}">Next</button>`
