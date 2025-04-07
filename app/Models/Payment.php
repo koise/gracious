@@ -17,7 +17,8 @@ class Payment extends Model
         'paid',
         'total',
         'qr_id',
-    ];
+        'reference_number',
+    ];    
 
     public function appointment()
     {
@@ -28,5 +29,4 @@ class Payment extends Model
     {
         return $this->belongsTo(Qr::class, 'qr_id');
     }
-
 }

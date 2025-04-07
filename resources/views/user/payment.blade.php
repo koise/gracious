@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Gracious Smile - Payment</title>
     
+    <title>Gracious Smile - Payment</title>
     @vite([
         'resources/scss/user/userappointment.scss', 
+        'resources/scss/user/paymentmodal.scss', 
         'resources/scss/usersidebar.scss',
         'resources/scss/modal.scss', 
         'resources/scss/footer.scss', 
@@ -26,7 +27,7 @@
                 <div class="content">
                     <div class="section">
                         <div class="section-header">
-                            <span>Note: Payment should be 50% before accepting the bookings.</span>
+                            <span>Note: Payment should be 50% before accepting the bookings. STRICTLY NO REFUND</span>
                             <h2>Book Appointment</h2>
                         </div>
                         <div class="section-content">
@@ -48,12 +49,10 @@
                                     <table class="table table-sortable">
                                         <thead>
                                             <tr>
-                                                <th>Transaction ID</th>
                                                 <th>Procedure</th>
                                                 <th>Balance</th>
                                                 <th>Status</th>
                                                 <th>Date</th>
-                                                <th>Payment Recipient</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -97,7 +96,143 @@
                 </div>
             </div>
         </div>
-    </main>
+
+
+<!-- Payment Modal -->
+<div id="paymentModal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style = "background-color:tranparent;">
+        <h3 style="font-size: 1.5em;" class="modal-title" id="paymentModalLabel">Make Payment</h3>
+      </div>
+      <div class="modal-body"" >
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header">
+                <h6>Transaction Details</h6>
+              </div>
+              <div class="card-body">
+                <table class="table table-bordered">
+                  <tr>
+                    <th>Transaction ID:</th>
+                    <td id="payment-transaction-id"></td>
+                  </tr>
+                  <tr>
+                    <th>Service/Procedure:</th>
+                    <td id="payment-service-name"></td>
+                  </tr>
+                  <tr>
+                    <th>Appointment Date:</th>
+                    <td id="payment-date"></td>
+                  </tr>
+                  <tr>
+                    <th>Amount Due:</th>
+                    <td id="payment-amount" class="font-weight-bold"></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <form id="paymentForm" enctype="multipart/form-data">
+              <input type="hidden" id="payment-form-transaction-id" name="transaction_id">
+              <input type="hidden" id="payment-form-qr-id" name="qr_id">
+              
+              <div class="form-group">
+                <label for="qr-selection">Select Gcash to pay</label>
+                <select class="form-control" id="qr-selection" required>
+                  <option value=""></option>
+                </select>
+              </div>
+              
+              <div id="qr-details">
+                <div class="text-center mb-3" style="text-align:center">
+                  <img id="qr-image" src="" alt="QR Code" class="img-fluid" style="max-width: 200px;">
+                </div>
+                <div class="alert alert-info">
+                  <p class="mb-1"><strong>Account Name:</strong> <span id="qr-account-name"></span></p>
+                  <p class="mb-0"><strong>Account Number:</strong> <span id="qr-account-number"></span></p>
+                </div>
+                <div class="form-group">
+                  <label for="payment-reference">Reference Number</label>
+                  <input type="text" class="form-control" id="payment-reference" name="reference_number" placeholder="Enter payment reference number" required>
+                </div>
+                <div class="form-group">
+                    <label for="payment-paid">Enter the amount you paid</label>
+                    <input type="number" class="form-control" id="payment-paid" name="paid" placeholder="Enter the amount you paid" required>
+                </div>
+                <button type="submit" id = "submitPaymentBtn" class="btn btn-primary btn-block submit-btn">Submit Payment</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id = "closePaymentModal" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Appointment Details Modal (No Bootstrap) -->
+<div class="modal-overlay" id="appointmentDetailsModal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>Appointment Details</h3>
+      <button class="close-modal-btn">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="appointment-card">
+        <div class="appointment-header">
+          <span class="appointment-id" id="modalTransactionId"></span>
+          <span class="appointment-status" id="modalStatus"></span>
+        </div>
+        
+        <div class="appointment-content">
+          <div class="appointment-info">
+            <div class="info-group">
+              <h4>Service Information</h4>
+              <div class="info-row">
+                <span class="info-label">Service:</span>
+                <span class="info-value" id="modalServiceName"></span>
+              </div>
+            </div>
+            
+            <div class="info-group">
+              <h4>Payment Information</h4>
+              <div class="info-row">
+                <span class="info-label">Balance:</span>
+                <span class="info-value highlight" id="modalBalance"></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Recipient:</span>
+                <span class="info-value" id="modalPaymentRecipient"></span>
+              </div>
+            </div>
+            
+            <div class="info-group">
+              <h4>Date Information</h4>
+              <div class="info-row">
+                <span class="info-label">Appointment Date:</span>
+                <span class="info-value" id="modalDate"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-pay" id="modalPayButton">Pay Now</button>
+    </div>
+  </div>
+</div>
+
+</main>
 </body>
+
+
+
 
 </html>

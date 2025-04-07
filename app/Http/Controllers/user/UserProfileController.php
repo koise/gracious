@@ -36,7 +36,7 @@ class UserProfileController extends Controller
         $idImage = Id::where('patient_id', $userId)->first();
         Log::info('ID image fetched for user ID: ' . $idImage); // <-- Log success
         return response()->json([
-            'image' => $idImage,
+            'image' => $idImage ? $idImage : 'No image found',
             'status' => 'success',
             'data' => $userDetails,
         ]);

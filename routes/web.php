@@ -15,6 +15,7 @@ use App\Http\Controllers\User\UserVerificationController;
 use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\UserRecordsController;
 use App\Http\Controllers\User\UserResetPasswordController;
+use App\Http\Controllers\User\UserPaymentController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\Admin\AdminQrController;
 use Illuminate\Support\Facades\Route;
@@ -55,13 +56,16 @@ Route::middleware('user.auth')->group(function () {
     Route::get('payment', [UserDashboardController::class, 'create'])->name('user.payment');
     Route::get('logout', [UserLoginController::class, 'logout'])->name('user.logout');
     //PAYMMENT
+    Route::get('/payments/qr-details/{id}', [UserPaymentController::class, 'getQRDetailsByTransaction'])->name('payments.qr-details');
+    Route::get('/appointments/{transactionId}', [AppointmentController::class, 'getAppointmentDetails']);
     Route::get('payment', [UserDashboardController::class, 'indexPayment'])->name('user.payment');
     Route::get('dashboard/payment', [UserDashboardController::class, 'getLatestAppointmentDetails']);
     Route::get('payment/history', [UserDashboardController::class, 'paymentHistory'])->name('user.payment.history');
+    Route::post('/payments/update/{id}', [UserPaymentController::class, 'updatePayment']);
     //PROFILE
     Route::get('/profile', [UserLoginController::class, 'profile'])->name('user.profile');
-    Route::get('user/fetch', [UserProfileController::class, 'fetch']);
     Route::post('/user/upload-id-image', [UserProfileController::class, 'uploadIdImage']);
+    Route::get('user/fetch', [UserProfileController::class, 'fetch']);
     Route::get('/fetch-image', [UserProfileController::class, 'fetchImage']);
 });
 

@@ -53,6 +53,7 @@
                         </div>
                         <div id="activePagination" class="pagination-controls"></div>
                     </div>
+
     </main>
 </body>
 </html>
