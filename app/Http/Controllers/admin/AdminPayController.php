@@ -156,6 +156,58 @@ class AdminPayController extends Controller
         }
     }
 
+    private function sendBookingReminderSms(Payment $payment)
+    {
+        $apiKey = '8a187bf2a00ac9d4d87a1bfa37bed908';  
+        $url = 'https://api.semaphore.co/api/v4/priority';  
+
+        $client = new Client();
+
+        try {
+            // Retrieve the associated appointment and user
+            $appointment = $payment->appointment; // Adjust as needed for the actual relationship
+            $user = $appointment ? $appointment->user : null;
+
+            if ($user) {
+                // Format the total amount for the message
+                $formattedTotal = number_format($payment->total, 2);
+
+                // Construct the message
+                $message = "Dear {$user->first_name} {$user->last_name},\n\n" .
+                        "We hope you're doing well. This is a reminder for your upcoming appointment at Gracious Clinic. " .
+                        "To proceed with your booking for the {$appointment->service_name} service, please settle your balance of PHP {$formattedTotal}.\n\n" .
+                        "Kindly make your payment to confirm your appointment. If you need assistance, don't hesitate to contact us.\n\n" .
+                        "Thank you for choosing Gracious Clinic. We look forward to serving you soon!";
+
+                // Send the SMS using Semaphore API
+                $response = $client->post($url, [
+                    'form_params' => [
+                        'apikey' => $apiKey,
+                        'number' => $user->number, // Get the user's number
+                        'message' => $message,
+                    ]
+                ]);
+
+                if ($response->getStatusCode() === 200) {
+                    return true;
+                } else {
+                    // Log the error response
+                    Log::error("SMS failed: " . $response->getBody());
+                    return false;
+                }
+            } else {
+                // Log or handle case where user is not found
+                Log::error('User not found for payment ID ' . $payment->id);
+                return false;
+            }
+        } catch (RequestException $e) {
+            // Log the exception message
+            Log::error("Error sending SMS: " . $e->getMessage());
+            return false;
+        }
+    }
+
+
     private function sendPaymentUpdateSms(Payment $payment)
     {
         $apiKey = '8a187bf2a00ac9d4d87a1bfa37bed908';  
@@ -201,7 +253,6 @@ class AdminPayController extends Controller
         }
     }
     
-
     public function sendTotalPayment(Request $request)
     {
         try {
@@ -223,8 +274,8 @@ class AdminPayController extends Controller
             // Save the updated payment
             $payment->save();
     
-            // Send SMS notification
-            $sent = $this->sendPaymentUpdateSms($payment);
+            // Send SMS notification (use the correct method here)
+            $sent = $this->sendBookingReminderSms($payment);
     
             if ($sent) {
                 // Return a success response
@@ -251,6 +302,7 @@ class AdminPayController extends Controller
             ], 500);
         }
     }
+    
     
     public function getPaymentDetails($paymentId)
     {

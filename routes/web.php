@@ -44,6 +44,7 @@ Route::prefix('account')->middleware('user.guest')->group(function () {
     Route::post('reset/send-otp', [UserResetPasswordController::class, 'sendOtp'])->name('user.reset.sendOtp');
 });
 
+
 Route::middleware('user.auth')->group(function () {
     Route::get('dashboard', [UserDashboardController::class, 'create'])->name('user.dashboard');
     Route::get('user/fetch/id', [UserDashboardController::class, 'fetch'])->name('fetch.id');
@@ -58,7 +59,10 @@ Route::middleware('user.auth')->group(function () {
     Route::get('payment', [UserDashboardController::class, 'create'])->name('user.payment');
     Route::get('logout', [UserLoginController::class, 'logout'])->name('user.logout');
     //PAYMMENT
-    Route::get('/payments/qr-details/{id}', [UserPaymentController::class, 'getQRDetailsByTransaction'])->name('payments.qr-details');
+    Route::get('/payments/except-latest', [UserPaymentController::class, 'getAllPaymentsExceptLatestAppointment']);
+    Route::get('/payments/qr-by-appointment/{appointmentId}', [UserPaymentController::class, 'getQRDetailsPaymentDetailsByAppointment']);
+    Route::get('/appointments/payment-details/{appointmentId}', [UserPaymentController::class, 'getPaymentDetailsById']);
+    Route::get('/user/latest-appointment', [UserPaymentController::class, 'latestAppointmentByUser'])->name('user.latestAppointment');
     Route::get('/appointments/{transactionId}', [UserPaymentController::class, 'getAppointmentDetails']);
     Route::get('payment', [UserDashboardController::class, 'indexPayment'])->name('user.payment');
     Route::get('dashboard/payment', [UserDashboardController::class, 'getLatestAppointmentDetails']);
@@ -84,7 +88,6 @@ Route::prefix('admin')->middleware(['admin.auth', 'role:Admin'])->group(function
     //PAYMENT
     Route::put('/complete-payment', [AdminPayController::class, 'markPaymentCompleted']);
     Route::post('/receive-payment', [AdminPayController::class, 'receivePayment']);
-    Route::get('/admin/send-total-payment', [AdminPayController::class, 'sendTotalPayment']);
     Route::get('/payment-details/{paymentId}', [AdminPayController::class, 'getPaymentDetails']);
     Route::get('/populate-payments', [AdminPayController::class, 'populatePayments']);
     Route::post('/send-total-payment', [AdminPayController::class, 'sendTotalPayment']);

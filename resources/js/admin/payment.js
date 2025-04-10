@@ -3,7 +3,6 @@ import axios from 'axios';
 
 // Set CSRF token for all axios requests
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
 // Function to trigger the population of payment data
 function populatePayments(status = 'All', search = '') {
     // Show a loading indicator
@@ -28,14 +27,17 @@ function populatePayments(status = 'All', search = '') {
 
                 // Loop through the data and populate the table
                 response.data.data.forEach(payment => {
+                    const user = payment.appointment.user; // Access the user object inside appointment
+
                     $('#userTableBody').append(`
                         <tr>
                             <td>${payment.id}</td>
                             <td>${payment.appointment.procedures}</td>
+                            <td>${user.first_name} ${user.last_name}</td> <!-- Combine first and last name -->
                             <td>${payment.paid}</td>
                             <td>${payment.total}</td>
                             <td>${payment.status}</td>
-                            <td>${payment.qr.gcash_name}</td>
+                            <td>${payment.qr.name}</td>
                             <td>
                                 <button class="action-btn" data-payment-id="${payment.id}" data-action="view">View</button>
                             </td>
@@ -64,7 +66,7 @@ function viewPaymentDetails(paymentId) {
 
             // Populate modal fields
             $('#paymentModal .modal-title').text(`Payment Details - ID: ${paymentId}`);
-            $('#paymentModal #patientName').text(payment.patient_name);
+            $('#paymentModal #patientName').text(payment.first_name + ' ' + payment.last_name);
             $('#paymentModal #appointmentDetails').text(payment.appointment_details);
             $('#paymentModal #paid').text(`The Customer Paid: ${payment.paid}`); 
             $('#paymentModal #referenceNumber').text(`Reference Number: ${payment.reference_number ? payment.reference_number : 'Not Paid'}`);
@@ -73,6 +75,9 @@ function viewPaymentDetails(paymentId) {
             $('#paymentModal #paymentGcashName').text(payment.gcash_name);
             $('#paymentModal #paymentDate').text(payment.created_at);
             $('#paymentModal #paymentStatus').val(payment.status);
+            $('#paymentModal #status').text(`Appointment status: ${payment.status}`);
+            $('#paymentModal #procedures').text(`Procedures: ${payment.procedures}`);
+            $('#paymentModal #remarks').text(`Remarks: ${payment.remarks ? payment.remarks : 'N/A'}`);
 
             // ✅ Set patient image
             if (payment.file_path) {

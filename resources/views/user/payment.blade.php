@@ -27,8 +27,8 @@
                 <div class="content">
                     <div class="section">
                         <div class="section-header">
-                            <span>Note: Payment should be 50% before accepting the bookings. STRICTLY NO REFUND</span>
-                            <h2>Book Appointment</h2>
+                            <span>Note: Payment should downpayment PHP 500 for booking. STRICTLY NO REFUND</span>
+                            <h2>Booked Payment</h2>
                         </div>
                         <div class="section-content">
                             <div class="counter">
@@ -68,7 +68,7 @@
                     </div>
                     <div class="section">
                         <div class="section-header">
-                            <h2>Appointment History</h2>
+                            <h2>Payment History</h2>
                         </div>
                         <div class="table-wrapper">
                             <div class="table-navigation">
@@ -179,49 +179,78 @@
   <div class="modal-container">
     <div class="modal-header">
       <h3>Appointment Details</h3>
-      <button class="close-modal-btn">&times;</button>
+      <button class="close-modal-btn" onclick="closeModal()">&times;</button>
     </div>
     
     <div class="modal-body">
       <div class="appointment-card">
+        
+        <!-- Appointment Header -->
         <div class="appointment-header">
-          <span class="appointment-id" id="modalTransactionId"></span>
-          <span class="appointment-status" id="modalStatus"></span>
+          <span class="appointment-id" id="modalTransactionId">#12345</span>
+          <span class="appointment-status" id="modalStatus">Pending</span>
         </div>
         
+        <!-- Appointment Content -->
         <div class="appointment-content">
           <div class="appointment-info">
+            
+            <!-- Service Information -->
             <div class="info-group">
               <h4>Service Information</h4>
               <div class="info-row">
-                <span class="info-label">Service:</span>
-                <span class="info-value" id="modalServiceName"></span>
+                <span class="info-label">Procedures:</span>
+                <span class="info-value" id="modalProcedures">Tooth Extraction</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Remarks:</span>
+                <span class="info-value" id="modalRemarks">No complications expected.</span>
               </div>
             </div>
             
+            <!-- Payment Information -->
             <div class="info-group">
               <h4>Payment Information</h4>
               <div class="info-row">
                 <span class="info-label">Balance:</span>
-                <span class="info-value highlight" id="modalBalance"></span>
+                <span class="info-value highlight" id="modalBalance">₱0.00</span>
               </div>
               <div class="info-row">
-                <span class="info-label">Recipient:</span>
-                <span class="info-value" id="modalPaymentRecipient"></span>
+                <span class="info-label">Paid:</span>
+                <span class="info-value" id="modalPaidStatus"></span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Reference No:</span>
+                <span class="info-value" id="modalReferenceNumber">N/A</span>
               </div>
             </div>
             
+            <!-- Date Information -->
             <div class="info-group">
               <h4>Date Information</h4>
               <div class="info-row">
                 <span class="info-label">Appointment Date:</span>
-                <span class="info-value" id="modalDate"></span>
+                <span class="info-value" id="modalAppointmentDate">April 14, 2025</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Time Preference:</span>
+                <span class="info-value" id="modalPreference">Morning</span>
               </div>
             </div>
+            
+            <!-- QR Information -->
+            <div class="info-group">
+              <h4>QR Information</h4>
+              <div class="info-row">
+                <span class="info-label">Gcash Receiptient: </span>
+                <span class="info-value" id="modalQrName"></span>
+              </div>
+            </div>
+
           </div>
         </div>
+        
       </div>
-    </div>
     </div>
   </div>
 </div>

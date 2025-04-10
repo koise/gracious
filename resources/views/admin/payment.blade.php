@@ -55,6 +55,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Appointment Services</th>
+                                    <th>Patient Name</th>
                                     <th>Paid</th>
                                     <th>Total</th>
                                     <th>Status</th>
@@ -93,14 +94,16 @@
             <label for="patientName">Patient Name</label>
             <span id="patientName">Edgar Dollentas</span>
             <p id="paid">Edgar Dollentas</span>
-            <p id="referenceNumber">Edgar Dollentas</span>
-            <p id="balance">Edgar Dollentas</span>
+            <p id="referenceNumber"></span>
+            <p id="appointmentStatus"></span>
+            <p id="procedures"></span>
+            <p id="remarks"></span>
           </div>
           
           <!-- Subtotal/Total -->
           <div class="form-group">
             <label for="totalAmount">Subtotal/Total</label>
-            <input type="number" class="form-control" id="totalAmount" value="50000">
+            <input type="number" class="form-control" id="totalAmount"  min="0">
           </div>
 
           <!-- Payment Status Dropdown -->
