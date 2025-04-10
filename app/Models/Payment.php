@@ -29,4 +29,9 @@ class Payment extends Model
     {
         return $this->belongsTo(Qr::class, 'qr_id');
     }
+
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'patient_id'); // Assuming the column in the payments table is 'patient_id'
+    }
 }

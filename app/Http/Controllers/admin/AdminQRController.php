@@ -16,6 +16,45 @@ class AdminQRController extends Controller
         return view('admin.qr');
     }
 
+    public function updateStatus(Request $request)
+    {
+        try {
+            // Validate request input for status and qrID
+            $request->validate([
+                'qrID' => 'required|integer',  // Ensure qrID is an integer
+                'status' => 'required|in:active,inactive',  // Only 'active' or 'inactive' are valid statuses
+            ]);
+    
+            // Find the QR Code by qrID
+            $qrCode = Qr::find($request->qrID);
+    
+            // Check if QR code exists
+            if (!$qrCode) {
+                return response()->json(['message' => 'QR code not found'], 404);
+            }
+    
+            // Update the status
+            $qrCode->status = $request->status;
+            $qrCode->save();
+    
+            // Return success message
+            return response()->json([
+                'message' => 'QR code status updated successfully',
+                'qrCode' => $qrCode
+            ], 200);
+    
+        } catch (\Exception $e) {
+            Log::error('Error updating QR code status:', [
+                'error_message' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
+            ]);
+            return response()->json(['message' => 'Something went wrong, please try again.'], 500);
+        }
+    }
+    
+
+
     public function store(Request $request)
     {
         try {
@@ -50,7 +89,7 @@ class AdminQRController extends Controller
                     'image_path' => "$type/$filename",  // Store relative path
                     'number' => $request->number,
                     'gcash_name' => $request->gcash_name,
-                    'status' => 'inactive'
+                    'status' => 'active'
                 ]);
     
                 return response()->json(['message' => 'QR Code saved successfully!', 'file_path' => "$type/$filename"], 200);

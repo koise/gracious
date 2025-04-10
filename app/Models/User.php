@@ -66,7 +66,6 @@ class User extends Authenticatable
     {
         return $this->hasOne(Id::class, 'patient_id');
     }
-    
 
     public function province()
     {

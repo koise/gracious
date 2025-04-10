@@ -102,7 +102,7 @@
 <div id="paymentModal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-      <div class="modal-header" style = "background-color:tranparent;">
+      <div class="modal-header2" style = "background-color:tranparent;">
         <h3 style="font-size: 1.5em;" class="modal-title" id="paymentModalLabel">Make Payment</h3>
       </div>
       <div class="modal-body"" >
@@ -222,13 +222,58 @@
         </div>
       </div>
     </div>
-    
-    <div class="modal-footer">
-      <button class="btn-pay" id="modalPayButton">Pay Now</button>
     </div>
   </div>
 </div>
 
+
+<!-- Payment History Modal -->
+<div class="modal fade" id="paymentHistoryModal" tabindex="-1" aria-labelledby="paymentHistoryModalLabel" style = "display:none;" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content shadow">
+      
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="paymentHistoryModalLabel">Payment History</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+        <h6 class="text-muted">Payment Info</h6>
+        <hr>
+        <div class="row mb-2">
+          <div class="col-md-6"><strong>Status:</strong> <span id="ph-status" class="float-end badge bg-success"></span></div>
+          <div class="col-md-6"><strong>Amount Paid:</strong> <span id="ph-paid" class="float-end"></span></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-6"><strong>Reference Number:</strong> <span id="ph-ref" class="float-end"></span></div>
+          <div class="col-md-6"><strong>Created At:</strong> <span id="ph-created" class="float-end"></span></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-6"><strong>Last Updated:</strong> <span id="ph-updated" class="float-end"></span></div>
+        </div>
+
+        <h6 class="text-muted mt-4">Appointment Info</h6>
+        <hr>
+        <div class="row mb-2">
+          <div class="col-md-6"><strong>Appointment Date:</strong> <span id="ph-app-date" class="float-end"></span></div>
+          <div class="col-md-6"><strong>Time Preference:</strong> <span id="ph-app-time" class="float-end"></span></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-6"><strong>Status:</strong> <span id="ph-app-status" class="float-end badge bg-secondary"></span></div>
+          <div class="col-md-6"><strong>Procedure:</strong> <span id="ph-procedure" class="float-end"></span></div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-12"><strong>Remarks:</strong> <span id="ph-remarks" class="float-end"></span></div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
 </main>
 </body>
 

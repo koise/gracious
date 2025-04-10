@@ -320,36 +320,56 @@ filterDateInput.addEventListener('change', () => {
 
 $(document).on('click', '#accept-btn', function () {
     const appointmentId = $(this).data('id');
-
     axios.get(`/admin/appointment/fetch/${appointmentId}`)
-        .then(response => {
-            const { appointment, timeRange } = response.data;
+    .then(response => {
+        const { appointment, timeRange } = response.data;
 
-            $('#accept-appointment-id').val(appointment.id);
-            $('#preference').text(appointment.preference);
+        $('#accept-appointment-id').val(appointment.id);
+        $('#preference').text(appointment.preference);
 
+        axios.get(`/admin/patient-id/${appointmentId}`)
+        .then(patientRes => {
+            const { data } = patientRes.data;
+    
+            $('#patient-name').text(data.full_name);
+            $('#patient-id-number').text(data.patient_id);
+            // Handle image
+            const imageContainer = $('.patient-image');
+            if (data.file_path) {
+                $('.patient-image img')
+                                        .attr('src', data.file_path)
+                                        .css({
+                                            'width': '200px',  // Adjust the width as needed
+                                            'height': 'auto',  // Adjust the height as needed or set a fixed value
+                                            'display': 'block'
+                                        });
 
-            if (timeRange) {
-                const min = convertTo12HourFormat(timeRange[0]);
-                const max = convertTo12HourFormat(timeRange[1]);
-                $('#time').attr('min', timeRange[0]);
-                $('#time').attr('max', timeRange[1]);
-                $('#time').val(timeRange[0]); 
-                $('#time-validation-message').text('');
-                $('#timeRange').text(`${min} to ${max}`);
             } else {
-                $('#time').removeAttr('min');
-                $('#time').removeAttr('max');
-                $('#time').val('');
-                $('#timeRange').text('');
-                $('#time-validation-message').text(''); 
-            }
-
-            $('#acceptModal').fadeIn().css('display', 'flex');
+                imageContainer.alt = 'No image uploaded yet.';
+            }            
         })
-        .catch(() => {
-            alert('Error fetching appointment data');
-        });
+    
+        if (timeRange) {
+            const min = convertTo12HourFormat(timeRange[0]);
+            const max = convertTo12HourFormat(timeRange[1]);
+            $('#time').attr('min', timeRange[0]);
+            $('#time').attr('max', timeRange[1]);
+            $('#time').val(timeRange[0]);
+            $('#time-validation-message').text('');
+            $('#timeRange').text(`${min} to ${max}`);
+        } else {
+            $('#time').removeAttr('min');
+            $('#time').removeAttr('max');
+            $('#time').val('');
+            $('#timeRange').text('');
+            $('#time-validation-message').text('');
+        }
+
+        $('#acceptModal').fadeIn().css('display', 'flex');
+    })
+    .catch(() => {
+        alert('Error fetching appointment data');
+    });
 });
 
 function convertTo12HourFormat(time) {

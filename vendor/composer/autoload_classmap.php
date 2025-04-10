@@ -18,6 +18,7 @@ return array(
     'App\\Models\\Authorization' => $baseDir . '/app/Models/Authorization.php',
     'App\\Models\\City' => $baseDir . '/app/Models/City.php',
     'App\\Models\\Employee' => $baseDir . '/app/Models/Employee.php',
+    'App\\Models\\Id' => $baseDir . '/app/Models/Id.php',
     'App\\Models\\MedicalRecord' => $baseDir . '/app/Models/MedicalRecord.php',
     'App\\Models\\Otp' => $baseDir . '/app/Models/Otp.php',
     'App\\Models\\Payment' => $baseDir . '/app/Models/Payment.php',

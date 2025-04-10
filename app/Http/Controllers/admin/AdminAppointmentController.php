@@ -8,13 +8,157 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Models\Qr;
+use App\Models\Payment;
+use App\Models\Id;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Barryvdh\DomPDF\Facade\PDF;
 use Illuminate\Support\Facades\Log;
 
 class AdminAppointmentController extends Controller
+{   
+    public function markPaymentCompleted(Request $request)
 {
+    try {
+        // Log the incoming request data for debugging
+        Log::info('Incoming request data for markPaymentCompleted:', $request->all());
+
+        // Validate the incoming request
+        $validated = $request->validate([
+            'payment_id' => 'required|exists:payment,id', // Ensure the payment ID exists
+        ]);
+
+        // Retrieve the payment by ID
+        $payment = Payment::findOrFail($request->payment_id);
+
+        // Mark the payment as completed
+        $payment->status = 'completed'; // Set the status to 'completed'
+
+        // Save the updated payment
+        $payment->save();
+
+        // Send SMS notification after payment completion (you can add your SMS method here)
+        $sent = $this->sendPaymentCompletedSms($payment);
+
+        if ($sent) {
+            // Return a success response
+            return response()->json([
+                'message' => 'Payment marked as completed and SMS sent.',
+                'payment' => $payment,
+            ], 200);
+        } else {
+            // If SMS failed, return an error response
+            return response()->json([
+                'message' => 'Payment marked as completed, but failed to send SMS.',
+                'payment' => $payment,
+            ], 500);
+        }
+    } catch (\Exception $e) {
+        // Log the error for debugging
+        Log::error("Error marking payment as completed: " . $e->getMessage());
+
+        // Handle errors and return an error response
+        return response()->json([
+            'error' => 'Unable to process the payment completion.',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+private function sendPaymentCompletedSms(Payment $payment)
+{
+    $apiKey = '8a187bf2a00ac9d4d87a1bfa37bed908';  
+    $url = 'https://api.semaphore.co/api/v4/priority';  
+
+    $client = new Client();
+
+    try {
+        // Retrieve the associated appointment and user
+        $appointment = $payment->appointment; // Adjust as needed for the actual relationship
+        $user = $appointment ? $appointment->user : null;
+
+        if ($user) {
+            $formattedAmount = number_format($payment->total, 2);
+            $response = $client->post($url, [
+                'form_params' => [
+                    'apikey' => $apiKey,
+                    'number' => $user->number, // Get the user's number
+                    'message' => "Dear {$user->first_name}, your payment of PHP {$formattedAmount} has been completed for your appointment. Thank you! - Gracious Clinic",
+                ]
+            ]);
+
+            if ($response->getStatusCode() === 200) {
+                return true;
+            } else {
+                // Log the error response
+                Log::error("SMS failed: " . $response->getBody());
+                return false;
+            }
+        } else {
+            // Log or handle case where user is not found
+            Log::error('User not found for payment ID ' . $payment->id);
+            return false;
+        }
+    } catch (RequestException $e) {
+        // Log the exception message
+        Log::error("Error sending SMS: " . $e->getMessage());
+        return false;
+    }
+}
+
+    public function getPatientIdDetails($appointmentId)
+    {
+        // Step 1: Find the appointment
+        $appointment = Appointment::find($appointmentId);
+    
+        if (!$appointment) {
+            Log::error("Appointment not found", ['appointment_id' => $appointmentId]);
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'Appointment not found.'
+            ], 404);
+        }
+    
+        // Step 2: Get patient_id from appointment
+        $patientId = $appointment->patient_id;
+    
+        // Step 3: Find patient ID photo
+        $id = Id::with('patient')->where('patient_id', $patientId)->first();
+    
+        if (!$id) {
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'No uploaded ID for this patient yet.'
+            ], 404);
+        }
+    
+        if (!$id->patient) {
+            Log::error("Related patient record not found for ID entry", [
+                'id_entry' => $id->id,
+                'expected_patient_id' => $patientId
+            ]);
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'Patient record not found.'
+            ], 404);
+        }
+    
+        $fullName = $id->patient->first_name . ' ' . $id->patient->last_name;
+    
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'patient_id' => $id->patient_id,
+                'full_name' => $fullName,
+                'file_path' => asset('storage/' . $id->file_path),
+            ]
+        ]);
+    }
+
     public function viewPending()
     {
         return view('admin.appointment-pending');
@@ -326,42 +470,55 @@ class AdminAppointmentController extends Controller
 
     public function reject(Request $request)
     {
-
         $appointment = Appointment::findOrFail($request->id);
-
+    
         $validator = Validator::make($request->all(), [
             'id' => 'required',
         ], [
             'id.required' => 'ID does not exist',
         ]);
-
+    
+        // Find the user associated with the appointment
         $user = User::findOrFail($appointment->patient_id);
-
+    
+        // Format the appointment date
         $formattedDate = date('m-d-Y', strtotime($appointment->appointment_date));
-
+    
+        // Get the rejection reason if provided
         $reason = $request->reason ? $request->reason : '';
-
+    
+        // Send rejection SMS
         $sent = $this->sendRejectedSms(
             $user->first_name,
             $user->number,
             $reason,
-            $formattedDate,
+            $formattedDate
         );
-
+    
+        // Validate the request
         if ($validator->fails()) {
             return response()->json(false, 422);
         }
-
-
+    
+        // If the SMS was sent successfully, proceed to update the appointment and payment status
         if ($sent) {
+            // Update the appointment status to 'Rejected'
             $appointment->status = 'Rejected';
-            $appointment->touch();
+            $appointment->touch();  // Update the timestamp
             $appointment->save();
-
+    
+            // Find the payment associated with the appointment (assuming the payment has a foreign key to appointment)
+            $payment = Payment::where('appointment_id', $appointment->id)->first();
+    
+            if ($payment) {
+                $payment->status = 'cancelled';
+                $payment->save();
+            }
+    
             return response()->json(true, 200);
         }
     }
-
+    
     public function update(Request $request)
     {
         $appointment = Appointment::findOrFail($request->id);
@@ -378,8 +535,6 @@ class AdminAppointmentController extends Controller
 
         $appointment->status = $request->status;
         $appointment->save();
-
-
 
         return response()->json([], 200);
     }

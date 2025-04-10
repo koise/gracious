@@ -9,7 +9,48 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     <title>Gracious Smile Admin - Appointments</title>
 
-    @vite(['resources/scss/admin/admintable.scss', 'resources/scss/sidebar.scss', 'resources/scss/footer.scss', 'resources/js/sidebar.js', 'resources/scss/modal.scss', 'resources/js/admin/pendingappointment.js'])
+    @vite(['resources/scss/admin/admintable.scss', 
+           'resources/scss/sidebar.scss', 
+           'resources/scss/footer.scss', 
+           'resources/js/sidebar.js', 
+           'resources/js/admin/modal.js', 
+           'resources/scss/modal.scss', 
+           'resources/js/admin/pendingappointment.js'])
+
+    <style>
+        #acceptModal .patient-id-section {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center align the items */
+    margin-bottom: 20px;
+}
+
+#acceptModal .patient-image {
+    margin-bottom: 10px; /* Space between image and patient details */
+}
+
+#acceptModal .patient-info {
+    text-align: center; /* Center the text */
+}
+
+#acceptModal .patient-info h4,
+#acceptModal .patient-info p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+#acceptModal .patient-info label {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+#acceptModal .patient-image img {
+    width: 120px; /* Adjust image width as needed */
+    height: 150px; /* Adjust image height as needed */
+    display: block;
+    margin: 0 auto;
+}
+    </style>
 </head>
 
 <body>
@@ -107,53 +148,73 @@
                         </div>
                     </div>
     </main>
-
     <div id="acceptModal">
-        <div class="modal">
-            <div class="form-header">
-                <div id="accept-close-modal">
-                    X
+    <div class="modal">
+        <div class="form-header">
+            <div id="accept-close-modal">X</div>
+        </div>
+        <div class="form-content">
+            <form id="acceptForm" method="POST">
+                @csrf
+                <input type="hidden" name="id" id="accept-appointment-id" value="" required>
+
+                <div class="form-control patient-id-section">
+                    <div class="patient-image" style="display:block">
+                    <p><span><strong><label>Patient ID: </label><strong></span></p>
+                        <img src="/api/placeholder/120/150" alt="Patient Photo ID" style="width:120px; height:150px; display:block; margin: 0 auto;"/>
+                    </div>
+                    <div class="patient-info" style="display:block">
+                        <h4><label for="patient-id-number">Patient ID:</label> <span id="patient-id-number"></span></h4>
+                        <p><label for="patient-name">Name:</label> <span id="patient-name"></span></p>
+                    </div>
                 </div>
-            </div>
-            <div class="form-content">
-                <form id="acceptForm" method="POST">
-                    @csrf
-                    <input type="hidden" name="id" id="accept-appointment-id" value="" required>
-                    <div class="form-control">
-                        <span id="time-validation-message" class="validation-message"></span>
-                    </div>
+                
+                <div class="form-control">
+                    <span id="time-validation-message" class="validation-message"></span>
+                </div>
 
-                    <div class="form-control">
-                        <p>Would you like to accept this appointment?</p>
-                    </div>
-                    <div class="form-control">
-                        <p>Preference: <span id="preference"></span></p>
-                    </div>
-                    <div class="form-control">
-                        <p>Time Input: <span id="timeRange"></span></p>
-                    </div>
-                    <div class="form-control">
-                        <input type="time" name="time" id="time" required>
-                    </div>
+                <div class="form-control">
+                    <p>Would you like to accept this appointment?</p>
+                </div>
+                <div class="form-control">
+                    <p>Preference: <span id="preference"></span></p>
+                </div>
+                <div class="form-control">
+                    <p>Time Input: <span id="timeRange"></span></p>
+                </div>
+                <div class="form-control">
+                    <input type="time" name="time" id="time" required>
+                </div>
 
-                    <div class="form-control">
-                        <button type="submit" class="submit-btn">Confirm</button>
-                    </div>
-                </form>
-            </div>
+                <div class="form-control">
+                    <button type="submit" class="submit-btn">Confirm</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
+
+
     <div id="rejectModal">
         <div class="modal">
             <div class="form-header">
-                <div id="reject-close-modal">
-                    X
-                </div>
+                <div id="reject-close-modal">X</div>
             </div>
             <div class="form-content">
                 <form id="rejectForm" method="POST">
                     @csrf
                     <input type="hidden" name="id" id="reject-appointment-id" value="" required>
+                    
+                    <div class="form-control patient-id-section">
+                        <div class="patient-image">
+                            <img src="/api/placeholder/120/150" alt="Patient Photo ID" />
+                        </div>
+                        <div class="patient-info">
+                            <h4>Patient ID: <span id="patient-id-number"></span></h4>
+                            <p>Name: <span id="patient-name"></span></p>
+                        </div>
+                    </div>
+                    
                     <div class="form-control">
                         <p>Would you like to reject this appointment?</p>
                     </div>
@@ -170,6 +231,7 @@
             </div>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 

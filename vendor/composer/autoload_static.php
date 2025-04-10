@@ -561,6 +561,7 @@ class ComposerStaticInit8c804e4a8c3c1ea0e6dd61980c279cdd
         'App\\Models\\Authorization' => __DIR__ . '/../..' . '/app/Models/Authorization.php',
         'App\\Models\\City' => __DIR__ . '/../..' . '/app/Models/City.php',
         'App\\Models\\Employee' => __DIR__ . '/../..' . '/app/Models/Employee.php',
+        'App\\Models\\Id' => __DIR__ . '/../..' . '/app/Models/Id.php',
         'App\\Models\\MedicalRecord' => __DIR__ . '/../..' . '/app/Models/MedicalRecord.php',
         'App\\Models\\Otp' => __DIR__ . '/../..' . '/app/Models/Otp.php',
         'App\\Models\\Payment' => __DIR__ . '/../..' . '/app/Models/Payment.php',

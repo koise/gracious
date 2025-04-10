@@ -187,8 +187,6 @@
                 </div>
             </div>
             <div class="form-content">
-                <form id="deactivateForm" method="POST">
-                    @csrf
                     <input type="hidden" name="id" id="deactivate-gcash-id" value="">
                     <div class="form-control">
                         <p>Are you sure you want to deactivate this QR?</p>
@@ -197,9 +195,8 @@
                         <p id="deactivate-qr"></p>
                     </div>
                     <div class="form-control">
-                        <button type="submit" class="submit-btn">Confirm</button>
+                    <button id = "deactivate-qr-button">Deactivate QR</button>
                     </div>
-                </form>
             </div>
         </div>
     </div>
@@ -212,8 +209,6 @@
                 </div>
             </div>
             <div class="form-content">
-                <form id="activateForm" method="POST">
-                    @csrf
                     <input type="hidden" name="id" id="activate-gcash-id" value="">
                     <div class="form-control">
                         <p>Are you sure you want to activate this QR?</p>
@@ -222,9 +217,8 @@
                         <p id="activate-qr"></p>
                     </div>
                     <div class="form-control">
-                        <button type="submit" class="submit-btn">Confirm</button>
+                      <button id = "activate-qr-button">Activate QR</button>
                     </div>
-                </form>
             </div>
         </div>
     </div>

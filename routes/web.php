@@ -1,23 +1,25 @@
 <?php
-
-use App\Http\Controllers\User\UserLoginController;
 use App\Http\Controllers\Admin\AdminLoginController;
+use App\Http\Controllers\Admin\AdminQrController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminEmployeeController;
 use App\Http\Controllers\Admin\AdminUserController;
-use App\Http\Controllers\User\UserRegisterController;
 use App\Http\Controllers\Admin\AdminAppointmentController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminPatientRecordController;
 use App\Http\Controllers\Admin\AdminAuthorizationController;
 use App\Http\Controllers\Admin\AdminSmsController;
+use App\Http\Controllers\Admin\AdminPayController;
+use App\Http\Controllers\Admin\AdminIDController;
+
 use App\Http\Controllers\User\UserVerificationController;
+use App\Http\Controllers\User\UserRegisterController;
 use App\Http\Controllers\User\UserDashboardController;
+use App\Http\Controllers\User\UserLoginController;
 use App\Http\Controllers\User\UserRecordsController;
 use App\Http\Controllers\User\UserResetPasswordController;
 use App\Http\Controllers\User\UserPaymentController;
 use App\Http\Controllers\User\UserProfileController;
-use App\Http\Controllers\Admin\AdminQrController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
 
@@ -57,7 +59,7 @@ Route::middleware('user.auth')->group(function () {
     Route::get('logout', [UserLoginController::class, 'logout'])->name('user.logout');
     //PAYMMENT
     Route::get('/payments/qr-details/{id}', [UserPaymentController::class, 'getQRDetailsByTransaction'])->name('payments.qr-details');
-    Route::get('/appointments/{transactionId}', [AppointmentController::class, 'getAppointmentDetails']);
+    Route::get('/appointments/{transactionId}', [UserPaymentController::class, 'getAppointmentDetails']);
     Route::get('payment', [UserDashboardController::class, 'indexPayment'])->name('user.payment');
     Route::get('dashboard/payment', [UserDashboardController::class, 'getLatestAppointmentDetails']);
     Route::get('payment/history', [UserDashboardController::class, 'paymentHistory'])->name('user.payment.history');
@@ -74,15 +76,26 @@ Route::prefix('admin')->middleware('admin.guest')->group(function () {
     Route::post('authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
 });
 
-Route::post('/qr/update', [AdminQRController::class, 'update'])->name('admin.qr.update');
 
+
+;
+Route::post('/qr/status', [AdminQRController::class, 'updateStatus']);
 Route::prefix('admin')->middleware(['admin.auth', 'role:Admin'])->group(function () {
+    //PAYMENT
+    Route::put('/complete-payment', [AdminPayController::class, 'markPaymentCompleted']);
+    Route::post('/receive-payment', [AdminPayController::class, 'receivePayment']);
+    Route::get('/admin/send-total-payment', [AdminPayController::class, 'sendTotalPayment']);
+    Route::get('/payment-details/{paymentId}', [AdminPayController::class, 'getPaymentDetails']);
+    Route::get('/populate-payments', [AdminPayController::class, 'populatePayments']);
+    Route::post('/send-total-payment', [AdminPayController::class, 'sendTotalPayment']);
+    // ID
+    Route::get('/patient-id/{patientId}', [AdminAppointmentController::class, 'getPatientIdDetails']);
     // QR Route
     Route::get('/qr', [AdminQRController::class, 'index'])->name('admin.qr');
     Route::post('/qr/store', [AdminQRController::class, 'store'])->name('admin.qr.store');
     Route::get('/qr/populate', [AdminQRController::class, 'populateQRs']);
     Route::get('/qr/{id}', [AdminQRController::class, 'getQRCodeDetails']);
-
+    Route::post('/qr/update', [AdminQRController::class, 'update'])->name('admin.qr.update');
 
     //PAYMENTS
     Route::get('/payments', function () { return view('admin.payment'); })->name('admin.payments');
