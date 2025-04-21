@@ -219,10 +219,10 @@
                         <p>Would you like to reject this appointment?</p>
                     </div>
                     <div class="form-control">
-                        <p>Reason for rejecting (Optional)</p>
+                        <p>Reason for rejecting (Required)</p>
                     </div>
                     <div class="form-control">
-                        <textarea name="reason" id="reason" cols="10" rows="4"></textarea>
+                        <textarea name="reason" id="reason" cols="10" rows="4" required></textarea>
                     </div>
                     <div class="form-control">
                         <button type="submit" class="submit-btn">Confirm</button>

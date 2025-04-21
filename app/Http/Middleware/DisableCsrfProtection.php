@@ -15,7 +15,6 @@ class DisableCsrfProtection
      */
     public function handle($request, Closure $next)
     {
-        // Exclude specific routes from CSRF protection
         if ($request->is('api/login')) {
             return $next($request);
         }
