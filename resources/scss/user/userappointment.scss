@@ -169,6 +169,23 @@
                                     margin: 5px 0;
                                     font-size: 3rem;
                                 }
+
+                                .terms-checkbox {
+                                    display: flex;
+                                    align-items: flex-start;
+                                    gap: 10px;
+                                    margin: 15px 0;
+
+                                    input[type="checkbox"] {
+                                        margin-top: 3px;
+                                    }
+
+                                    label {
+                                        font-size: 0.9rem;
+                                        color: #666;
+                                        line-height: 1.4;
+                                    }
+                                }
                             }
                         }
                         .table-wrapper {
@@ -477,6 +494,23 @@
                                 span {
                                     margin: 5px 0;
                                     font-size: 1.2rem;
+                                }
+
+                                .terms-checkbox {
+                                    display: flex;
+                                    align-items: flex-start;
+                                    gap: 10px;
+                                    margin: 15px 0;
+
+                                    input[type="checkbox"] {
+                                        margin-top: 3px;
+                                    }
+
+                                    label {
+                                        font-size: 0.9rem;
+                                        color: #666;
+                                        line-height: 1.4;
+                                    }
                                 }
                             }
                         }

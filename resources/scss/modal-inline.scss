@@ -1,0 +1,162 @@
+/* Modal Inline Form Layout Styles */
+
+#addModal, #cancelModal {
+    .inline-form {
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            
+            .col-12 {
+                grid-column: span 12;
+            }
+            
+            .col-6 {
+                grid-column: span 6;
+            }
+            
+            .col-4 {
+                grid-column: span 4;
+            }
+            
+            .col-3 {
+                grid-column: span 3;
+            }
+        }
+        
+        .form-header-label {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #343a40;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .appointment-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            
+            .label-value-pair {
+                display: flex;
+                margin-bottom: 0.5rem;
+                
+                .label {
+                    font-weight: 600;
+                    color: #495057;
+                    flex: 0 0 120px;
+                }
+                
+                .value {
+                    color: #212529;
+                }
+            }
+        }
+        
+        .field-with-icon {
+            position: relative;
+            
+            .icon {
+                position: absolute;
+                left: 0.75rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #6c757d;
+            }
+            
+            input, select {
+                padding-left: 2.5rem;
+            }
+        }
+        
+        /* Custom select styling */
+        .custom-select-wrapper {
+            position: relative;
+            
+            &::after {
+                content: '▼';
+                font-size: 0.8em;
+                position: absolute;
+                right: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #6c757d;
+                pointer-events: none;
+            }
+            
+            select {
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                cursor: pointer;
+            }
+        }
+    }
+    
+    /* Labels that float above the fields */
+    .floating-label {
+        position: relative;
+        margin-bottom: 1.5rem;
+        
+        input, select, textarea {
+            height: 3.5rem;
+            padding: 1.25rem 0.75rem 0.5rem;
+        }
+        
+        textarea {
+            min-height: 5rem;
+            padding-top: 1.5rem;
+        }
+        
+        label {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            font-size: 0.75rem;
+            color: #6c757d;
+            transition: all 0.2s ease;
+            pointer-events: none;
+            margin: 0;
+        }
+        
+        input:focus ~ label,
+        select:focus ~ label,
+        textarea:focus ~ label {
+            color: #007bff;
+            font-weight: 600;
+        }
+    }
+}
+
+/* Tablet and mobile adjustments */
+@media (max-width: 768px) {
+    #addModal, #cancelModal {
+        .inline-form {
+            .form-row {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 0.75rem;
+                
+                .col-6, .col-4, .col-3 {
+                    grid-column: span 6;
+                }
+            }
+        }
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    #addModal, #cancelModal {
+        .inline-form {
+            .form-row {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+    }
+} 

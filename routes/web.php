@@ -60,19 +60,31 @@ Route::middleware('user.auth')->group(function () {
     Route::get('logout', [UserLoginController::class, 'logout'])->name('user.logout');
     //PAYMMENT
     Route::get('/payments/except-latest', [UserPaymentController::class, 'getAllPaymentsExceptLatestAppointment']);
+    Route::get('/payments/history-with-joins', [UserPaymentController::class, 'getPaymentHistoryWithJoins']);
+    Route::get('/payments/details-with-joins/{id}', [UserPaymentController::class, 'getPaymentDetailsWithJoins']);
     Route::get('/payments/qr-by-appointment/{appointmentId}', [UserPaymentController::class, 'getQRDetailsPaymentDetailsByAppointment']);
     Route::get('/appointments/payment-details/{appointmentId}', [UserPaymentController::class, 'getPaymentDetailsById']);
     Route::get('/user/latest-appointment', [UserPaymentController::class, 'latestAppointmentByUser'])->name('user.latestAppointment');
+    Route::get('/dashboard/latest-appointment', [UserPaymentController::class, 'latestAppointmentByUser']);
+    Route::get('/dashboard/fetch', [UserDashboardController::class, 'fetchLatestAppointment']);
     Route::get('/appointments/{transactionId}', [UserPaymentController::class, 'getAppointmentDetails']);
     Route::get('payment', [UserDashboardController::class, 'indexPayment'])->name('user.payment');
     Route::get('dashboard/payment', [UserDashboardController::class, 'getLatestAppointmentDetails']);
     Route::get('payment/history', [UserDashboardController::class, 'paymentHistory'])->name('user.payment.history');
     Route::post('/payments/update/{id}', [UserPaymentController::class, 'updatePayment']);
+    Route::post('/payments/complete/{id}', [UserPaymentController::class, 'completePayment']);
+    // QR CODES
+    Route::get('/qr', [UserPaymentController::class, 'getAllActiveQRCodes']);
+    Route::get('/qr-codes/active', [UserPaymentController::class, 'getAllActiveQRCodes']);
+    Route::get('/qr/{id}', [UserPaymentController::class, 'getQRById']);
+    // Payment submission route
+    Route::post('/payments/submit', [UserPaymentController::class, 'submitPayment']);
     //PROFILE
     Route::get('/profile', [UserLoginController::class, 'profile'])->name('user.profile');
     Route::post('/user/upload-id-image', [UserProfileController::class, 'uploadIdImage']);
     Route::get('user/fetch', [UserProfileController::class, 'fetch']);
     Route::get('/fetch-image', [UserProfileController::class, 'fetchImage']);
+    Route::get('/appointment/calendar-events', [UserDashboardController::class, 'getCalendarEvents']);
 });
 
 Route::prefix('admin')->middleware('admin.guest')->group(function () {
@@ -86,8 +98,9 @@ Route::prefix('admin')->middleware('admin.guest')->group(function () {
 Route::post('/qr/status', [AdminQRController::class, 'updateStatus']);
 Route::prefix('admin')->middleware(['admin.auth', 'role:Admin'])->group(function () {
     //PAYMENT
-    Route::put('/complete-payment', [AdminPayController::class, 'markPaymentCompleted']);
+    Route::post('/mark-payment-completed', [AdminPayController::class, 'markPaymentCompleted']);
     Route::post('/receive-payment', [AdminPayController::class, 'receivePayment']);
+    Route::post('/cancel-payment', [AdminPayController::class, 'cancelPayment']);
     Route::get('/payment-details/{paymentId}', [AdminPayController::class, 'getPaymentDetails']);
     Route::get('/populate-payments', [AdminPayController::class, 'populatePayments']);
     Route::post('/send-total-payment', [AdminPayController::class, 'sendTotalPayment']);
@@ -178,4 +191,40 @@ Route::prefix('staff')->middleware(['admin.auth', 'role:Staff'])->group(function
 
 Route::prefix('admin')->middleware('admin.auth')->group(function () {
     Route::get('logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
+});
+
+// Appointment routes
+Route::post('/book/appointment', [App\Http\Controllers\User\UserDashboardController::class, 'bookAppointment']);
+Route::post('/cancel/appointment', [App\Http\Controllers\User\UserDashboardController::class, 'cancelAppointment']);
+Route::prefix('appointment')->group(function () {
+    Route::post('/fetch', [App\Http\Controllers\User\UserDashboardController::class, 'fetchAppointments']);
+    Route::post('/populate', [App\Http\Controllers\User\UserDashboardController::class, 'populateAppointments']);
+    Route::get('/calendar-events', [App\Http\Controllers\User\UserDashboardController::class, 'getCalendarEvents']);
+    Route::get('/booked-slots', [App\Http\Controllers\User\UserDashboardController::class, 'getBookedSlots']);
+    Route::get('/booked-slots-month', [App\Http\Controllers\User\UserDashboardController::class, 'getBookedSlotsMonth']);
+});
+
+// Add this route for debugging QR images
+Route::get('/debug/qr-images', function () {
+    $qrs = \App\Models\Qr::all();
+    $results = [];
+    
+    foreach ($qrs as $qr) {
+        $publicPath = public_path($qr->image_path);
+        $storagePath = storage_path('app/public/' . $qr->image_path);
+        
+        $result = [
+            'id' => $qr->id,
+            'name' => $qr->name,
+            'image_path' => $qr->image_path,
+            'exists_in_public' => file_exists($publicPath),
+            'public_path' => $publicPath,
+            'exists_in_storage' => file_exists($storagePath),
+            'storage_path' => $storagePath,
+        ];
+        
+        $results[] = $result;
+    }
+    
+    return response()->json($results);
 });

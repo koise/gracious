@@ -18,6 +18,7 @@ class Payment extends Model
         'total',
         'qr_id',
         'reference_number',
+        'receipt_path',
     ];    
 
     public function appointment()

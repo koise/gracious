@@ -12,6 +12,8 @@ use App\Models\Appointment;
 use App\Models\Id; 
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class AdminPayController extends Controller
 {   
@@ -34,8 +36,24 @@ class AdminPayController extends Controller
 
             // Save the updated payment
             $payment->save();
+            
+            // Update the associated appointment status if it exists
+            if ($payment->appointment_id) {
+                $appointment = Appointment::find($payment->appointment_id);
+                if ($appointment) {
+                    // Update appointment status to 'Accepted' (valid enum value in appointments table)
+                    $appointment->status = 'Accepted';
+                    $appointment->save();
+                    
+                    Log::info('Appointment status updated to Accepted', [
+                        'appointment_id' => $appointment->id,
+                        'previous_status' => $appointment->getOriginal('status'),
+                        'new_status' => 'Accepted'
+                    ]);
+                }
+            }
 
-            // Send SMS notification after payment completion (you can add your SMS method here)
+            // Send SMS notification after payment completion
             $sent = $this->sendPaymentCompletedSms($payment);
 
             if ($sent) {
@@ -126,6 +144,16 @@ class AdminPayController extends Controller
     
             // Save the updated payment
             $payment->save();
+
+            // Find the associated appointment but don't change its status
+            // Keep it as "Pending" for admin review
+            $appointment = Appointment::where('id', $payment->appointment_id)->first();
+            if ($appointment) {
+                Log::info('Associated appointment found, keeping status as is:', [
+                    'appointment_id' => $appointment->id,
+                    'current_status' => $appointment->status
+                ]);
+            }
     
             // Send SMS notification after payment received
             $sent = $this->sendPaymentUpdateSms($payment);
@@ -303,10 +331,38 @@ class AdminPayController extends Controller
         }
     }
     
-    
+    private function getQrImageUrl($imagePath)
+    {
+        // Check if file exists in public directory
+        if ($imagePath && File::exists(public_path($imagePath))) {
+            return '/' . $imagePath;
+        }
+        
+        // Check if file exists in storage directory
+        if ($imagePath && Storage::exists('public/' . $imagePath)) {
+            return '/storage/' . $imagePath;
+        }
+        
+        // If image doesn't exist in either location, check if it's a full URL
+        if ($imagePath && (str_starts_with($imagePath, 'http://') || str_starts_with($imagePath, 'https://'))) {
+            return $imagePath;
+        }
+        
+        // Return default image path if none found
+        return '/default-image.jpg';
+    }
+
     public function getPaymentDetails($paymentId)
     {
         try {
+            // Validate that paymentId is numeric
+            if (!is_numeric($paymentId)) {
+                return response()->json([
+                    'message' => 'Invalid payment ID. Must be a numeric value.',
+                    'error' => 'Invalid payment ID format.'
+                ], 400);
+            }
+
             // Query to join necessary tables and get all data
             $data = DB::table('payment')
                 ->join('appointments', 'appointments.id', '=', 'payment.appointment_id')
@@ -314,13 +370,33 @@ class AdminPayController extends Controller
                 ->join('users', 'users.id', '=', 'appointments.patient_id')
                 ->leftJoin('id', 'id.patient_id', '=', 'users.id')
                 ->where('payment.id', $paymentId)
-                ->select('payment.*', 'appointments.*', 'qr.*', 'users.*', 'id.*', 'payment.status') // Added 'payment.status'
+                ->select(
+                    'payment.*', 
+                    'appointments.*', 
+                    'qr.*', 
+                    'users.*', 
+                    'id.*', 
+                    'payment.status',
+                    'qr.image_path as qr_image_path' // Explicitly select QR image path
+                )
                 ->first();
     
             // Check if data exists
             if (!$data) {
                 return response()->json(['message' => 'Payment not found.'], 404);
             }
+    
+            // Format the image path to ensure it's correctly displayed
+            if ($data->image_path) {
+                $data->qr_image_url = $this->getQrImageUrl($data->image_path);
+            }
+    
+            // Log successful data retrieval with image path info
+            Log::info('Payment details retrieved successfully', [
+                'payment_id' => $paymentId,
+                'qr_image_path' => $data->image_path,
+                'qr_image_url' => $data->qr_image_url ?? null
+            ]);
     
             // Return the data with payment status included
             return response()->json($data);
@@ -336,11 +412,13 @@ class AdminPayController extends Controller
         try {
             $query = Payment::with(['appointment.user', 'qr']);
             
+            // Status filter
             if ($request->has('status') && $request->get('status') !== 'All') {
                 $query->where('status', $request->get('status'));
             }
     
-            if ($request->has('search')) {
+            // Search filter
+            if ($request->has('search') && !empty($request->get('search'))) {
                 $search = $request->get('search');
     
                 $query->where(function ($q) use ($search) {
@@ -355,18 +433,103 @@ class AdminPayController extends Controller
                       });
                 });
             }
+            
+            // Date range filter
+            if ($request->has('date_from') && !empty($request->get('date_from'))) {
+                $query->whereDate('created_at', '>=', $request->get('date_from'));
+            }
+            
+            if ($request->has('date_to') && !empty($request->get('date_to'))) {
+                $query->whereDate('created_at', '<=', $request->get('date_to'));
+            }
+            
+            // Amount range filter
+            if ($request->has('min_amount') && !empty($request->get('min_amount'))) {
+                $query->where('total', '>=', $request->get('min_amount'));
+            }
+            
+            if ($request->has('max_amount') && !empty($request->get('max_amount'))) {
+                $query->where('total', '<=', $request->get('max_amount'));
+            }
     
             // Sort by status and prioritize 'pending' first, then by status in ascending order
             $payments = $query->orderByRaw("FIELD(status, 'pending') DESC")
                              ->orderBy('status', 'asc')
+                             ->orderBy('created_at', 'desc') // Most recent payments first
                              ->paginate(10);
+            
+            // Log the filters being used
+            Log::info('Payment filters applied', [
+                'status' => $request->get('status'),
+                'search' => $request->get('search'),
+                'date_from' => $request->get('date_from'),
+                'date_to' => $request->get('date_to'),
+                'min_amount' => $request->get('min_amount'),
+                'max_amount' => $request->get('max_amount'),
+                'results_count' => $payments->total()
+            ]);
     
             return response()->json($payments);
     
         } catch (\Exception $e) {
-            Log::error('Error in populatePayments:', ['message' => $e->getMessage()]);
+            Log::error('Error in populatePayments:', [
+                'message' => $e->getMessage(),
+                'filters' => $request->all()
+            ]);
             return response()->json(['error' => 'Unable to fetch payments.'], 500);
         }
     }
     
+    /**
+     * Handle payment cancellation
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function cancelPayment(Request $request)
+    {
+        try {
+            // Log the incoming request data for debugging
+            Log::info('Incoming request data for cancelPayment:', $request->all());
+    
+            // Validate the request data
+            $validated = $request->validate([
+                'payment_id' => 'required|exists:payment,id',  // Ensure payment_id exists
+            ]);
+    
+            // Retrieve the payment by ID
+            $payment = Payment::findOrFail($request->payment_id);
+    
+            // Update the payment status to cancelled
+            $payment->status = 'cancelled';
+    
+            // Save the updated payment
+            $payment->save();
+    
+            // Find the associated appointment but don't change its status
+            // Leave it for admin to decide what to do with the appointment
+            $appointment = Appointment::where('id', $payment->appointment_id)->first();
+            if ($appointment) {
+                Log::info('Associated appointment found for cancelled payment:', [
+                    'appointment_id' => $appointment->id,
+                    'current_status' => $appointment->status
+                ]);
+            }
+    
+            return response()->json([
+                'message' => 'Payment cancelled successfully.',
+                'payment' => $payment,
+            ], 200);
+    
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error("Error cancelling payment: " . $e->getMessage());
+    
+            // Return error response
+            return response()->json([
+                'error' => 'Unable to cancel payment.',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

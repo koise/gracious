@@ -1,0 +1,411 @@
+.calendar-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+
+    &.active {
+        opacity: 1;
+        visibility: visible;
+
+        .modal-content {
+            transform: translateY(0);
+        }
+    }
+
+    .modal-content {
+        background: white;
+        width: 90%;
+        max-width: 800px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+        max-height: 90vh;
+        overflow-y: auto;
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1;
+
+            h3 {
+                margin: 0;
+                color: #333;
+                font-size: 1.5rem;
+                font-weight: 600;
+            }
+
+            .close-modal {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: #666;
+                cursor: pointer;
+                padding: 0.5rem;
+                transition: all 0.2s ease;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &:hover {
+                    background: #f5f5f5;
+                    color: #333;
+                }
+            }
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+
+            .time-slots-container {
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+                margin-top: 1rem;
+
+                .time-slots-section {
+                    background: #f8f9fa;
+                    padding: 1.5rem;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+                    h4 {
+                        color: #333;
+                        margin-bottom: 1rem;
+                        font-size: 1.1rem;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+
+                        &::before {
+                            content: '';
+                            display: inline-block;
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 50%;
+                            background: #007bff;
+                        }
+                    }
+
+                    .time-slots-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                        gap: 0.75rem;
+
+                        .time-slot {
+                            background: white;
+                            border: 2px solid #e9ecef;
+                            border-radius: 8px;
+                            padding: 0.75rem;
+                            text-align: center;
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                            font-weight: 500;
+                            color: #495057;
+                            position: relative;
+                            overflow: hidden;
+
+                            &:hover {
+                                border-color: #007bff;
+                                transform: translateY(-2px);
+                                box-shadow: 0 4px 6px rgba(0, 123, 255, 0.1);
+                            }
+
+                            &.selected {
+                                background: #007bff;
+                                color: white;
+                                border-color: #0056b3;
+                            }
+
+                            &.unavailable {
+                                background: #f8f9fa;
+                                color: #adb5bd;
+                                cursor: not-allowed;
+                                border-color: #e9ecef;
+
+                                &:hover {
+                                    transform: none;
+                                    box-shadow: none;
+                                }
+
+                                &::after {
+                                    content: '';
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    right: 0;
+                                    bottom: 0;
+                                    background: repeating-linear-gradient(
+                                        45deg,
+                                        transparent,
+                                        transparent 5px,
+                                        rgba(0, 0, 0, 0.05) 5px,
+                                        rgba(0, 0, 0, 0.05) 10px
+                                    );
+                                }
+                            }
+
+                            .slot-status {
+                                position: absolute;
+                                top: 0;
+                                right: 0;
+                                font-size: 0.7rem;
+                                background: #dc3545;
+                                color: white;
+                                padding: 2px 5px;
+                                border-radius: 0 0 0 5px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Enhanced calendar styling
+.calendar-container {
+    transition: all 0.3s ease;
+
+    &.view-transition {
+        opacity: 0.6;
+        transform: scale(0.98);
+    }
+}
+
+.fc-day-today-enhanced {
+    background-color: rgba(0, 123, 255, 0.05) !important;
+    border-radius: 8px;
+    
+    &::after {
+        content: 'Today';
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        font-size: 0.7rem;
+        background: #007bff;
+        color: white;
+        padding: 2px 5px;
+        border-radius: 3px;
+        opacity: 0.8;
+    }
+}
+
+.fc-header-enhanced {
+    font-weight: 600;
+}
+
+// Global loading indicator
+.global-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right, #007bff, #6610f2);
+    z-index: 2000;
+    animation: loading-bar 1.5s infinite linear;
+}
+
+@keyframes loading-bar {
+    0% {
+        width: 0;
+    }
+    50% {
+        width: 50%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+// Notification system
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1500;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    max-width: 350px;
+    
+    &.show {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        
+        &::before {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+    }
+    
+    &.notification-success {
+        border-left: 4px solid #28a745;
+        
+        .notification-content::before {
+            background-color: #28a745;
+        }
+    }
+    
+    &.notification-warning {
+        border-left: 4px solid #ffc107;
+        
+        .notification-content::before {
+            background-color: #ffc107;
+        }
+    }
+    
+    &.notification-error {
+        border-left: 4px solid #dc3545;
+        
+        .notification-content::before {
+            background-color: #dc3545;
+        }
+    }
+    
+    &.notification-info {
+        border-left: 4px solid #17a2b8;
+        
+        .notification-content::before {
+            background-color: #17a2b8;
+        }
+    }
+}
+
+// Enhanced legend items
+.legend-item {
+    opacity: 0;
+    transform: translateY(5px);
+    transition: all 0.3s ease;
+    
+    &.legend-item-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Enhanced service items in booking form
+#serviceList {
+    padding: 0;
+    margin: 1rem 0;
+    list-style-type: none;
+    
+    .service-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8f9fa;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+        border-left: 3px solid #007bff;
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.8rem;
+            
+            &:hover {
+                background: #c82333;
+                transform: scale(1.05);
+            }
+        }
+    }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+    .calendar-modal {
+        .modal-content {
+            width: 95%;
+            margin: 1rem;
+
+            .modal-body {
+                padding: 1rem;
+
+                .time-slots-container {
+                    .time-slots-section {
+                        padding: 1rem;
+
+                        .time-slots-grid {
+                            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                            gap: 0.5rem;
+
+                            .time-slot {
+                                padding: 0.5rem;
+                                font-size: 0.9rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    .notification {
+        left: 20px;
+        right: 20px;
+        max-width: none;
+    }
+}
+
+// Animation keyframes
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+} 
